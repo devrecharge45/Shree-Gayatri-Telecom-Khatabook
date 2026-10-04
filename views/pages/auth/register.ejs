@@ -1,0 +1,77 @@
+<%- include('../../layouts/header') %>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img src="/images/logo.png" alt="Logo" class="auth-logo" onerror="this.src='/icons/icon-128x128.png'">
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Start managing ledgers with <%= app.appShortName %></p>
+    </div>
+
+    <form action="/register" method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="name" class="form-label required">Full Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-control" 
+          placeholder="e.g. Ramesh Patel" 
+          value="<%= typeof oldInput !== 'undefined' && oldInput.name ? oldInput.name : '' %>"
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label required">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-control" 
+          placeholder="your@email.com" 
+          value="<%= typeof oldInput !== 'undefined' && oldInput.email ? oldInput.email : '' %>"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label required">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="At least 8 characters" 
+          required
+        >
+        <div class="password-requirements" style="margin-top: 0.4rem;">
+          Must be at least 8 characters with uppercase, lowercase, and a number.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label required">Confirm Password</label>
+        <input 
+          type="password" 
+          id="confirmPassword" 
+          name="confirmPassword" 
+          class="form-control" 
+          placeholder="Re-enter password" 
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: 0.5rem; padding: 0.85rem;">
+        Complete Registration
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="/login" class="auth-link">Login here</a>
+    </div>
+  </div>
+</div>
+
+<%- include('../../layouts/footer') %>

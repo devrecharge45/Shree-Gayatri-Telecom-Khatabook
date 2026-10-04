@@ -1,0 +1,71 @@
+<%- include('../../layouts/header') %>
+
+<%- include('../../layouts/breadcrumbs', {
+  breadcrumbs: [
+    { label: 'Parties', url: '/parties' },
+    { label: party.name, url: '/parties/' + party.id + '/ledger' },
+    { label: 'Edit Party' }
+  ]
+}) %>
+
+<div style="max-width: 600px; margin: 0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title">Edit Party Details</h1>
+      <a href="/parties/<%= party.id %>/ledger" class="btn btn-secondary btn-sm">Cancel</a>
+    </div>
+
+    <form action="/parties/<%= party.id %>/edit" method="POST">
+      <div class="form-group">
+        <label for="name" class="form-label required">Party Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-control" 
+          value="<%= party.name %>" 
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="mobile_no" class="form-label">Mobile Number</label>
+        <input 
+          type="tel" 
+          id="mobile_no" 
+          name="mobile_no" 
+          class="form-control" 
+          value="<%= party.mobile_no || '' %>" 
+          pattern="[6-9][0-9]{9}"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="notes" class="form-label">Notes</label>
+        <textarea 
+          id="notes" 
+          name="notes" 
+          class="form-control" 
+          rows="4"
+        ><%= party.notes || '' %></textarea>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-primary">Update Party</button>
+      </div>
+    </form>
+
+    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+      <h3 style="font-size: 0.95rem; color: #EF4444; margin-bottom: 0.5rem;">Danger Zone</h3>
+      <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Deleting this party will permanently delete all associated credit and debit transactions from your ledger.
+      </p>
+      <form action="/parties/<%= party.id %>/delete" method="POST" data-confirm="Are you sure you want to permanently delete this party and all ledger transactions?">
+        <button type="submit" class="btn btn-danger btn-sm">Delete Party Permanently</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../../layouts/footer') %>

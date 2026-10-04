@@ -1,0 +1,14 @@
+{
+  "watch": [
+    "src",
+    "views"
+  ],
+  "ext": "ts,ejs,json,css,js",
+  "ignore": [
+    "src/**/*.spec.ts",
+    "node_modules",
+    "dist",
+    "public"
+  ],
+  "exec": "ts-node --files src/server.ts"
+}

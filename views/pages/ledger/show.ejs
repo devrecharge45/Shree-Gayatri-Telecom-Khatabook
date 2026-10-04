@@ -1,0 +1,468 @@
+<%- include('../../layouts/header') %>
+
+<%- include('../../layouts/breadcrumbs', {
+  breadcrumbs: [
+    { label: 'Parties', url: '/parties' },
+    { label: party.name + ' (Ledger)' }
+  ]
+}) %>
+
+<!-- Party Details & Balance Card with Universal Accordion (All Screens) -->
+<% const bal = Number(party.current_balance) || 0; %>
+<section class="ledger-header-card">
+  <!-- Top Bar: Avatar, Party Name, Net Balance Badge & Accordion Toggle (All Screens) -->
+  <div class="ledger-top-row">
+    <div class="party-detail-info">
+      <div class="party-avatar-large">
+        <%= formatters.initials(party.name) %>
+      </div>
+      <div class="party-title-block">
+        <h1><%= party.name %></h1>
+        <!-- Realtime Status Pill Beside Name -->
+        <div class="header-balance-pill">
+          <% if (bal > 0) { %>
+            <span class="badge badge-credit">₹<%= formatters.currency(bal) %> You'll Get</span>
+          <% } else if (bal < 0) { %>
+            <span class="badge badge-debit">₹<%= formatters.currency(Math.abs(bal)) %> You'll Give</span>
+          <% } else { %>
+            <span class="badge badge-settled">Settled (₹0)</span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Universal Accordion Toggle Button (Active on All Screens: Mobile, Tablet, Laptop, Desktop) -->
+    <button type="button" id="togglePartyAccordionBtn" class="party-accordion-toggle-btn" aria-expanded="false" title="Click to view/hide party details & reports">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <span class="accordion-btn-text">Party Details</span>
+      <svg class="accordion-chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+  </div>
+
+  <!-- Collapsible Details Body (Universal Accordion for All Screens) -->
+  <div id="partyDetailsAccordion" class="party-details-accordion">
+    <div class="accordion-content-inner">
+      <div class="accordion-grid-layout">
+        <!-- Column 1: Contact & Communication Channels -->
+        <div class="accordion-col">
+          <span class="accordion-col-title">Contact & Communication</span>
+          <% if (party.mobile_no) { %>
+            <div class="party-contact-row">
+              <div class="party-phone-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span class="phone-digits"><%= party.mobile_no %></span>
+              </div>
+
+              <div class="party-comm-buttons">
+                <a href="tel:<%= party.mobile_no %>" class="btn btn-secondary btn-sm btn-touch-call" title="Call <%= party.name %>">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <span>Call</span>
+                </a>
+                
+                <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=Hello%20<%= encodeURIComponent(party.name) %>,%20your%20current%20ledger%20balance%20with%20<%= encodeURIComponent(company.name) %>%20is%20<%= formatters.currency(Math.abs(party.current_balance)) %>." target="_blank" class="btn btn-secondary btn-sm btn-touch-wa" title="WhatsApp <%= party.name %>">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.983.538 1.83.824 2.791.824 3.182 0 5.768-2.587 5.768-5.767.001-3.18-2.584-5.769-5.768-5.769zm3.385 8.167c-.145.408-.724.747-1.189.847-.32.069-.738.125-2.144-.457-1.798-.744-2.956-2.57-3.045-2.689-.089-.119-.729-.97-.729-1.85 0-.88.461-1.312.625-1.488.164-.176.357-.22.476-.22.12 0 .239.001.343.006.109.006.257-.041.401.306.149.357.509 1.242.553 1.332.045.089.074.194.015.313-.059.119-.089.194-.178.298-.089.104-.188.232-.268.312-.089.089-.182.186-.078.365.104.179.463.764.994 1.237.684.609 1.261.798 1.44.887.179.089.283.075.388-.045.104-.119.447-.521.566-.7.119-.179.239-.149.402-.089.164.06 1.041.491 1.22.58.179.089.298.134.343.209.045.074.045.432-.1 1.044z"/></svg>
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          <% } else { %>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">No phone number configured.</div>
+          <% } %>
+        </div>
+
+        <!-- Column 2: Notes & Remarks -->
+        <div class="accordion-col">
+          <span class="accordion-col-title">Customer Notes & Remarks</span>
+          <% if (party.notes) { %>
+            <div class="party-notes-box">
+              <span><%= party.notes %></span>
+            </div>
+          <% } else { %>
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">No additional notes added.</div>
+          <% } %>
+        </div>
+
+        <!-- Column 3: Party Management & Reports -->
+        <div class="accordion-col">
+          <span class="accordion-col-title">Party Management</span>
+          <div class="party-actions-group">
+            <a href="/parties/<%= party.id %>/edit" class="btn btn-secondary btn-sm" title="Edit Name, Phone or Notes">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              Edit Party
+            </a>
+
+            <div class="dropdown">
+              <button type="button" class="btn btn-secondary btn-sm" data-toggle="dropdown">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Download Report &#9662;
+              </button>
+              <div class="dropdown-menu">
+                <a href="/parties/<%= party.id %>/report/pdf" class="dropdown-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  Download PDF Report
+                </a>
+                <a href="/parties/<%= party.id %>/report/xlsx" class="dropdown-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="17"></line><line x1="16" y1="13" x2="8" y2="17"></line></svg>
+                  Download Excel (.xlsx)
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter & Search Controls for Ledger -->
+<section class="ledger-filter-card">
+  <form id="ledgerFilterForm" action="/parties/<%= party.id %>/ledger" method="GET">
+    <!-- Top Filter Row: Search Input + Filter Toggle Button -->
+    <div class="filter-primary-row">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input 
+          type="text" 
+          name="search" 
+          class="form-control search-input" 
+          placeholder="Search by note, item or bill #..." 
+          value="<%= search %>"
+        >
+      </div>
+
+      <button 
+        type="button" 
+        id="toggleFilterDrawerBtn" 
+        class="btn btn-secondary filter-toggle-btn <%= (startDate || endDate) ? 'has-active-filter' : '' %>"
+        title="Toggle Date & Page Limit Filters"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        <span>Filters</span>
+        <% if (startDate || endDate) { %>
+          <span class="filter-indicator-dot"></span>
+        <% } %>
+      </button>
+
+      <button type="submit" class="btn btn-primary btn-search-go desktop-only">
+        Search
+      </button>
+    </div>
+
+    <!-- Quick Type Filter Pills (1-Tap Switching on Mobile & Desktop) -->
+    <div class="ledger-type-pills filter-pills">
+      <a href="/parties/<%= party.id %>/ledger?type=<%= search ? '&search=' + encodeURIComponent(search) : '' %><%= startDate ? '&startDate=' + startDate : '' %><%= endDate ? '&endDate=' + endDate : '' %>&limit=<%= limit %>" class="filter-pill <%= !type ? 'active' : '' %>">
+        All Transactions
+      </a>
+      <a href="/parties/<%= party.id %>/ledger?type=DEBIT<%= search ? '&search=' + encodeURIComponent(search) : '' %><%= startDate ? '&startDate=' + startDate : '' %><%= endDate ? '&endDate=' + endDate : '' %>&limit=<%= limit %>" class="filter-pill filter-pill-debit <%= type === 'DEBIT' ? 'active' : '' %>">
+        You Gave (Debit)
+      </a>
+      <a href="/parties/<%= party.id %>/ledger?type=CREDIT<%= search ? '&search=' + encodeURIComponent(search) : '' %><%= startDate ? '&startDate=' + startDate : '' %><%= endDate ? '&endDate=' + endDate : '' %>&limit=<%= limit %>" class="filter-pill filter-pill-credit <%= type === 'CREDIT' ? 'active' : '' %>">
+        You Got (Credit)
+      </a>
+    </div>
+
+    <!-- Hidden Type Input to Preserve Type in Full Form Submits -->
+    <input type="hidden" name="type" value="<%= type %>">
+
+    <!-- Collapsible Advanced Filter Drawer (Dates & Page Limit) -->
+    <div id="ledgerFilterDrawer" class="ledger-filter-drawer <%= (startDate || endDate) ? 'open' : '' %>">
+      <div class="drawer-fields-grid">
+        <div class="drawer-field">
+          <label class="drawer-label">From Date:</label>
+          <input 
+            type="date" 
+            name="startDate" 
+            class="form-control form-control-sm" 
+            value="<%= startDate %>" 
+          >
+        </div>
+
+        <div class="drawer-field">
+          <label class="drawer-label">To Date:</label>
+          <input 
+            type="date" 
+            name="endDate" 
+            class="form-control form-control-sm" 
+            value="<%= endDate %>" 
+          >
+        </div>
+
+        <div class="drawer-field">
+          <label class="drawer-label">Per Page:</label>
+          <select 
+            id="ledgerLimitSelect" 
+            name="limit" 
+            class="form-control form-control-sm limit-dropdown"
+          >
+            <option value="10" <%= limit === 10 ? 'selected' : '' %>>10 per page</option>
+            <option value="20" <%= limit === 20 ? 'selected' : '' %>>20 per page</option>
+            <option value="30" <%= limit === 30 ? 'selected' : '' %>>30 per page</option>
+            <option value="50" <%= limit === 50 ? 'selected' : '' %>>50 per page</option>
+            <option value="100" <%= limit === 100 ? 'selected' : '' %>>100 per page</option>
+          </select>
+        </div>
+
+        <div class="drawer-actions">
+          <button type="submit" class="btn btn-primary btn-sm">
+            Apply Filters
+          </button>
+          <% if (search || type || startDate || endDate) { %>
+            <a href="/parties/<%= party.id %>/ledger?limit=<%= limit %>" class="btn btn-secondary btn-sm" style="color: var(--text-muted);">
+              Clear
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+
+<!-- Transactions Container -->
+<section class="transaction-table-container">
+  <!-- Desktop Table (Screen >= 768px) -->
+  <div class="table-responsive desktop-only-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Details</th>
+          <th style="text-align: right;">You Gave (Debit)</th>
+          <th style="text-align: right;">You Got (Credit)</th>
+          <th style="text-align: right;">Running Balance</th>
+          <th style="text-align: center; width: 120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (transactions && transactions.length > 0) { %>
+          <% transactions.forEach(tx => { %>
+            <% const isDebit = tx.type === TransactionType.DEBIT; %>
+            <% const txDateStr = new Date(tx.transaction_date).toISOString().slice(0, 10); %>
+            <tr>
+              <td style="white-space: nowrap; font-weight: 500;">
+                <%= formatters.date(tx.transaction_date) %>
+              </td>
+              <td>
+                <div style="font-weight: 600;"><%= tx.notes || 'Transaction Entry' %></div>
+                <% if (tx.bill_reference) { %>
+                  <span class="tx-ref">Ref: <%= tx.bill_reference %></span>
+                <% } %>
+              </td>
+              <td style="text-align: right;">
+                <% if (isDebit) { %>
+                  <span class="amount-debit"><%= formatters.currency(tx.amount) %></span>
+                <% } else { %>
+                  <span style="color: var(--text-muted);">-</span>
+                <% } %>
+              </td>
+              <td style="text-align: right;">
+                <% if (!isDebit) { %>
+                  <span class="amount-credit"><%= formatters.currency(tx.amount) %></span>
+                <% } else { %>
+                  <span style="color: var(--text-muted);">-</span>
+                <% } %>
+              </td>
+              <td style="text-align: right; font-weight: 700;">
+                <%= formatters.currency(tx.balance_after) %>
+              </td>
+              <td style="text-align: center; white-space: nowrap;">
+                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                  <!-- Edit Transaction Button -->
+                  <button 
+                    type="button" 
+                    class="btn-table-action btn-edit-tx" 
+                    title="Edit Transaction"
+                    data-party-id="<%= party.id %>"
+                    data-tx-id="<%= tx.id %>"
+                    data-tx-type="<%= tx.type %>"
+                    data-tx-amount="<%= Number(tx.amount).toFixed(2) %>"
+                    data-tx-date="<%= txDateStr %>"
+                    data-tx-notes="<%= tx.notes || '' %>"
+                    data-tx-ref="<%= tx.bill_reference || '' %>"
+                    data-open-modal="editTxModal"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  </button>
+
+                  <!-- Delete Transaction Form -->
+                  <form action="/parties/<%= party.id %>/transactions/<%= tx.id %>/delete" method="POST" data-confirm="Delete this transaction? The balance will be automatically reversed.">
+                    <button type="submit" class="btn-table-action btn-delete-tx" title="Delete Entry">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+              No transactions recorded yet. Use the buttons below to add an entry.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Transaction Cards Stream (Screen < 768px) -->
+  <div class="mobile-tx-stream">
+    <% if (transactions && transactions.length > 0) { %>
+      <% transactions.forEach(tx => { %>
+        <% const isDebit = tx.type === TransactionType.DEBIT; %>
+        <% const txDateStr = new Date(tx.transaction_date).toISOString().slice(0, 10); %>
+        <div class="mobile-tx-card <%= isDebit ? 'card-debit' : 'card-credit' %>">
+          <div class="tx-card-header">
+            <span class="tx-card-date">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <%= formatters.date(tx.transaction_date) %>
+            </span>
+
+            <% if (isDebit) { %>
+              <span class="badge badge-debit">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                YOU GAVE
+              </span>
+            <% } else { %>
+              <span class="badge badge-credit">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                YOU GOT
+              </span>
+            <% } %>
+          </div>
+
+          <div class="tx-card-body">
+            <div class="tx-card-details">
+              <div class="tx-card-notes"><%= tx.notes || 'Transaction Entry' %></div>
+              <% if (tx.bill_reference) { %>
+                <span class="tx-card-ref">Ref: <%= tx.bill_reference %></span>
+              <% } %>
+            </div>
+
+            <div class="tx-card-amount <%= isDebit ? 'amount-debit' : 'amount-credit' %>">
+              <%= formatters.currency(tx.amount) %>
+            </div>
+          </div>
+
+          <div class="tx-card-footer">
+            <div class="tx-card-balance">
+              <span class="balance-tag">Balance:</span>
+              <span class="balance-val"><%= formatters.currency(tx.balance_after) %></span>
+            </div>
+
+            <div class="tx-card-actions">
+              <!-- Mobile Edit Action Button -->
+              <button 
+                type="button" 
+                class="btn-card-action btn-card-edit btn-edit-tx" 
+                title="Edit Transaction"
+                data-party-id="<%= party.id %>"
+                data-tx-id="<%= tx.id %>"
+                data-tx-type="<%= tx.type %>"
+                data-tx-amount="<%= Number(tx.amount).toFixed(2) %>"
+                data-tx-date="<%= txDateStr %>"
+                data-tx-notes="<%= tx.notes || '' %>"
+                data-tx-ref="<%= tx.bill_reference || '' %>"
+                data-open-modal="editTxModal"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Edit</span>
+              </button>
+
+              <!-- Mobile Delete Action Button -->
+              <form action="/parties/<%= party.id %>/transactions/<%= tx.id %>/delete" method="POST" data-confirm="Delete this transaction? The balance will be automatically reversed.">
+                <button type="submit" class="btn-card-action btn-card-delete btn-delete-tx" title="Delete Entry">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  <span>Delete</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="empty-state" style="padding: 3rem 1.5rem;">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <h4 style="font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">No Transactions Found</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Record your first credit or debit transaction using the buttons below.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Server-Side Numbered Pagination -->
+  <% if (totalPages > 1) { 
+    let pages = [];
+    if (totalPages <= 7) {
+      for (let p = 1; p <= totalPages; p++) pages.push(p);
+    } else {
+      pages.push(1);
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+      
+      if (currentPage <= 3) {
+        start = 2;
+        end = 4;
+      } else if (currentPage >= totalPages - 2) {
+        start = totalPages - 3;
+        end = totalPages - 1;
+      }
+      
+      if (start > 2) pages.push('...');
+      for (let p = start; p <= end; p++) pages.push(p);
+      if (end < totalPages - 1) pages.push('...');
+      pages.push(totalPages);
+    }
+  %>
+    <div class="pagination" style="padding: 1.25rem;">
+      <div>Page <%= currentPage %> of <%= totalPages %> (Total <%= totalCount %> records)</div>
+      <div class="pagination-controls">
+        <% if (currentPage > 1) { %>
+          <a href="/parties/<%= party.id %>/ledger?page=<%= currentPage - 1 %><%= type ? '&type=' + type : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= startDate ? '&startDate=' + startDate : '' %><%= endDate ? '&endDate=' + endDate : '' %>&limit=<%= limit %>" class="page-btn" title="Previous Page">
+            &larr;
+          </a>
+        <% } else { %>
+          <span class="page-btn disabled">&larr;</span>
+        <% } %>
+
+        <% pages.forEach(function(p) { %>
+          <% if (p === '...') { %>
+            <span class="page-dots">...</span>
+          <% } else { %>
+            <a href="/parties/<%= party.id %>/ledger?page=<%= p %><%= type ? '&type=' + type : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= startDate ? '&startDate=' + startDate : '' %><%= endDate ? '&endDate=' + endDate : '' %>&limit=<%= limit %>" class="page-btn <%= p === currentPage ? 'active' : '' %>">
+              <%= p %>
+            </a>
+          <% } %>
+        <% }); %>
+
+        <% if (currentPage < totalPages) { %>
+          <a href="/parties/<%= party.id %>/ledger?page=<%= currentPage + 1 %><%= type ? '&type=' + type : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= startDate ? '&startDate=' + startDate : '' %><%= endDate ? '&endDate=' + endDate : '' %>&limit=<%= limit %>" class="page-btn" title="Next Page">
+            &rarr;
+          </a>
+        <% } else { %>
+          <span class="page-btn disabled">&rarr;</span>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<!-- Fixed Khatabook Action Dock (You Gave / You Got) -->
+<aside class="ledger-bottom-dock">
+  <div class="dock-inner">
+    <button type="button" class="btn btn-debit dock-btn" data-open-modal="debitModal">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+      YOU GAVE ₹ (DEBIT)
+    </button>
+
+    <button type="button" class="btn btn-credit dock-btn" data-open-modal="creditModal">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      YOU GOT ₹ (CREDIT)
+    </button>
+  </div>
+</aside>
+
+<!-- Credit, Debit & Edit Modals -->
+<%- include('./partials/credit-modal') %>
+<%- include('./partials/debit-modal') %>
+<%- include('./partials/edit-modal') %>
+
+<%- include('../../layouts/footer') %>

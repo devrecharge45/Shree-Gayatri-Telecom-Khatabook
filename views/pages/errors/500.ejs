@@ -1,0 +1,21 @@
+<%- include('../../layouts/header') %>
+
+<div style="min-height: 55vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem 1rem;">
+  <div class="card" style="max-width: 520px; width: 100%; padding: 2.5rem 2rem;">
+    <div style="font-size: 3.5rem; font-weight: 900; color: #EF4444; line-height: 1;"><%= typeof statusCode !== 'undefined' ? statusCode : '500' %></div>
+    <h1 style="font-size: 1.4rem; font-weight: 700; margin: 1rem 0 0.5rem;">Internal Server Error</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+      <%= typeof message !== 'undefined' ? message : 'An unexpected error occurred. Please try again later.' %>
+    </p>
+
+    <% if (typeof errorStack !== 'undefined' && errorStack) { %>
+      <pre style="text-align: left; background-color: var(--bg-primary); padding: 1rem; border-radius: var(--radius-sm); font-size: 0.75rem; color: #EF4444; overflow-x: auto; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"><%= errorStack %></pre>
+    <% } %>
+
+    <a href="/parties" class="btn btn-secondary btn-block">
+      Return to Parties
+    </a>
+  </div>
+</div>
+
+<%- include('../../layouts/footer') %>

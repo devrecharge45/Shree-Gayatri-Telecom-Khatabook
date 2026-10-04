@@ -1,0 +1,539 @@
+/* ==========================================================================
+   Khatabook Pro - Parties Page (Main Home Dashboard)
+   ========================================================================== */
+
+/* Top Balance Summary Cards Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.stat-card.stat-net::before {
+  background-color: var(--color-primary);
+}
+
+.stat-card.stat-receive::before {
+  background-color: var(--color-credit);
+}
+
+.stat-card.stat-give::before {
+  background-color: var(--color-debit);
+}
+
+.stat-label {
+  font-size: 0.825rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stat-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.stat-subtext {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Action & Search Bar */
+.parties-action-bar {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.action-bar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 17px;
+  height: 17px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  height: 42px;
+  padding-left: 2.6rem !important;
+  padding-right: 2.3rem !important;
+  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-main);
+  width: 100%;
+  transition: var(--transition);
+}
+
+.search-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.search-clear-btn:hover {
+  background-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.btn-add-party {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 42px;
+  padding: 0 1.15rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.2);
+}
+
+/* Filter Pills & Limit Dropdown Row (Aligned in One Row) */
+.parties-filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 2px 4px 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.825rem;
+  font-weight: 600;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.filter-pill:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+  background-color: var(--color-primary-light);
+}
+
+.filter-pill.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.25);
+}
+
+.parties-limit-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.limit-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.limit-dropdown {
+  height: 34px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.limit-dropdown:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+/* Party List Rows */
+.party-list-container {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.party-item-wrapper {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  transition: var(--transition);
+}
+
+.party-item-wrapper:last-child {
+  border-bottom: none;
+}
+
+.party-item-wrapper:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.party-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.party-left {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.party-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.party-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.party-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.party-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.party-phone-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.meta-dot {
+  color: var(--border-color);
+}
+
+.party-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.party-balance-amount {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.party-balance-status {
+  font-size: 0.725rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.party-chevron {
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #94a3b8;
+  font-weight: 300;
+}
+
+/* Quick Touch Bar for Mobile Calling & Messaging */
+.party-quick-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem 0.75rem 4.5rem;
+}
+
+.btn-quick-touch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.btn-touch-call {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--color-primary-border);
+}
+
+.btn-touch-call:hover {
+  background-color: #dbeafe;
+}
+
+.btn-touch-wa {
+  color: #059669;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.btn-touch-wa:hover {
+  background-color: #d1fae5;
+}
+
+.btn-touch-edit {
+  color: #475569;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-touch-edit:hover {
+  background-color: #e2e8f0;
+}
+
+.empty-state {
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 1rem;
+  opacity: 0.4;
+}
+
+/* Responsive Mobile Breakpoint for Main Home Screen */
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .stat-card {
+    padding: 0.7rem 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: -0.01em;
+    gap: 0.2rem;
+  }
+
+  .stat-label svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stat-subtext {
+    display: none;
+  }
+
+  .parties-action-bar {
+    padding: 0.75rem;
+    gap: 0.65rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .action-bar-top {
+    gap: 0.5rem;
+  }
+
+  .search-input {
+    height: 38px;
+    font-size: 0.825rem;
+    padding-left: 2.25rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .search-icon {
+    left: 0.75rem;
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-add-party {
+    height: 38px;
+    padding: 0 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .parties-filters-row {
+    flex-direction: row; /* Keeps filters and limit in one neat line */
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .filter-pill {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .limit-dropdown {
+    height: 30px;
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .party-item {
+    padding: 0.85rem 0.85rem 0.35rem 0.85rem;
+  }
+
+  .party-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 0.95rem;
+  }
+
+  .party-name {
+    font-size: 0.95rem;
+  }
+
+  .party-balance-amount {
+    font-size: 1.05rem;
+  }
+
+  .party-quick-bar {
+    padding: 0 0.85rem 0.75rem 3.6rem;
+    gap: 0.35rem;
+  }
+
+  .btn-quick-touch {
+    padding: 0.25rem 0.55rem;
+    font-size: 0.725rem;
+  }
+}
