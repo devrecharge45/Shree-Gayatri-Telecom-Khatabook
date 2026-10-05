@@ -222,8 +222,27 @@ npm run format:check
 
 - **Helmet**: Hardened HTTP response headers with a tailored Content Security Policy.
 - **Rate Limiting**: Protects `/login` and `/register` against brute-force attacks.
-- **Cookie Security**: Auth JWT stored in `HttpOnly`, `SameSite=Strict`, `Secure` cookies.
+- **Cookie Security**: Auth JWT stored in `HttpOnly`, `SameSite=Lax`, `Secure` cookies with 15-day persistent session support.
 - **SQL Injection Prevention**: All database queries strictly parameterized via Sequelize ORM.
 - **IDOR Protection**: All party and ledger operations strictly scoped to the authenticated `user_id`.
 - **Centralized Error Interceptor**: Catches and translates database constraints into friendly user messages.
 - **Input Sanitization**: All incoming form bodies validated and XSS-sanitized via `express-validator`.
+
+---
+
+## ⚡ Keepalive & Health Check API (UptimeRobot / Render / Supabase)
+
+To prevent your Render web service and Supabase PostgreSQL database from sleeping or pausing:
+
+- **Endpoint**: `GET /health`
+- **Behavior**:
+  - Resets Render's 15-minute inactivity idle timer by receiving incoming HTTP traffic.
+  - Automatically queries Supabase (`SELECT 1;`) to keep database connections warm and prevent database sleep.
+  - Returns JSON with database connection status, latency, and uptime.
+- **UptimeRobot Setup**:
+  1. Create a new monitor on [UptimeRobot](https://uptimerobot.com/).
+  2. **Monitor Type**: `HTTP(s)`
+  3. **URL**: `https://<your-render-app>.onrender.com/health`
+  4. **Monitoring Interval**: `Every 1 or 2 minutes` (e.g. 2 min)
+  5. **HTTP Method**: `GET` or `HEAD`
+
