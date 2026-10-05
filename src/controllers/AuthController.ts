@@ -17,14 +17,19 @@ export class AuthController {
 
   public static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email, password } = req.body;
-      const { token } = await AuthService.login(email, password);
+      const { email, password, remember } = req.body;
+      const isRemember = remember === 'true' || remember === 'on' || remember === true;
+      const { token } = await AuthService.login(email, password, isRemember);
+
+      const maxAge = isRemember
+        ? 15 * 24 * 60 * 60 * 1000 // 15 days persistent session
+        : 24 * 60 * 60 * 1000; // 1 day standard session
 
       res.cookie('auth_token', token, {
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         secure: env.server.nodeEnv === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge
       });
 
       if (req.flash) req.flash('success', ['Welcome back!']);
@@ -41,9 +46,9 @@ export class AuthController {
 
       res.cookie('auth_token', token, {
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         secure: env.server.nodeEnv === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days default
       });
 
       if (req.flash) req.flash('success', ['Account created successfully!']);
@@ -56,7 +61,7 @@ export class AuthController {
   public static logout(req: Request, res: Response): void {
     res.clearCookie('auth_token', {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
       secure: env.server.nodeEnv === 'production'
     });
 

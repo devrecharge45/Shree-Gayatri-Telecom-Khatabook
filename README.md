@@ -135,7 +135,7 @@ DB_NAME=khatabook_db
 
 # Security & JWT Configuration
 JWT_SECRET=super_secure_jwt_signing_key_change_in_production_2026
-JWT_EXPIRES_IN=7d
+JWT_EXPIRES_IN=15d
 COOKIE_SECRET=super_secure_cookie_secret_key_change_me
 SESSION_SECRET=super_secure_session_secret_key_change_me
 ```

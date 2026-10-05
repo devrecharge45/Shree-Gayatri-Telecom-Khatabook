@@ -63,7 +63,7 @@ export class Config {
 
     this.security = {
       jwtSecret: process.env.JWT_SECRET || 'super_secure_jwt_signing_key_change_in_production_2026',
-      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+      jwtExpiresIn: process.env.JWT_EXPIRES_IN || '15d',
       cookieSecret: process.env.COOKIE_SECRET || 'super_secure_cookie_secret_key_change_me',
       sessionSecret: process.env.SESSION_SECRET || 'super_secure_session_secret_key_change_me'
     };

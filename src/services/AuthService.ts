@@ -36,7 +36,8 @@ export class AuthService {
    */
   public static async login(
     email: string,
-    password: string
+    password: string,
+    remember: boolean = true
   ): Promise<{ user: User; token: string }> {
     const user = await User.findOne({ where: { email: email.toLowerCase() } });
     if (!user) {
@@ -48,8 +49,12 @@ export class AuthService {
       throw AppError.unauthorized('Invalid email or password');
     }
 
+    const expiresIn = remember
+      ? (env.security.jwtExpiresIn as SignOptions['expiresIn'])
+      : ('1d' as SignOptions['expiresIn']);
+
     const token = jwt.sign({ id: user.id, email: user.email }, env.security.jwtSecret, {
-      expiresIn: env.security.jwtExpiresIn as SignOptions['expiresIn']
+      expiresIn
     });
 
     return { user, token };
