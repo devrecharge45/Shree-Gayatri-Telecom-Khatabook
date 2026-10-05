@@ -115,7 +115,6 @@ export class App {
         Logger.info(`  Local URL   : http://localhost:${port}`);
         Logger.info(`  External URL: http://[IP_ADDRESS]:${port}`);
         Logger.info(`  Company     : ${env.company.name}`);
-        Logger.info(`  GSTIN       : ${env.company.gst}`);
         Logger.info(`=======================================================`);
       });
     } catch (err: unknown) {

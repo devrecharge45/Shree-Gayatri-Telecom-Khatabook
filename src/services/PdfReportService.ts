@@ -80,37 +80,49 @@ export class PdfReportService {
     let headerTextX = 30;
     if (fs.existsSync(logoPath)) {
       try {
-        doc.image(logoPath, 30, 20, { width: 44 });
-        headerTextX = 84;
+        doc.image(logoPath, 30, 16, { fit: [48, 48] });
+        headerTextX = 86;
       } catch {
         headerTextX = 30;
       }
     }
 
+    const companyInfoWidth = 270;
+
     doc
-      .fontSize(15)
+      .fontSize(14)
       .fillColor('#0F172A')
       .font('Helvetica-Bold')
-      .text(env.company.name, headerTextX, 20)
-      .font('Helvetica')
-      .fontSize(8.5)
-      .fillColor('#475569')
-      .text(`GSTIN: ${env.company.gst || 'N/A'} • Phone: ${env.company.phone || 'N/A'}`)
-      .text(env.company.address ? `${env.company.address}` : '')
-      .text(env.company.email ? `Email: ${env.company.email}` : '');
+      .text(env.company.name, headerTextX, 16, { width: companyInfoWidth });
+
+    doc.font('Helvetica').fontSize(8.5).fillColor('#475569');
+
+    if (env.company.phone) {
+      doc.text(`Phone: ${env.company.phone}`, headerTextX, doc.y + 2, { width: companyInfoWidth });
+    }
+
+    if (env.company.address) {
+      doc
+        .fontSize(8)
+        .fillColor('#64748B')
+        .text(env.company.address, headerTextX, doc.y + 2, {
+          width: companyInfoWidth,
+          lineGap: 1.5
+        });
+    }
 
     // Right-aligned Document Title Block
     doc
       .fontSize(13)
       .fillColor('#1D4ED8')
       .font('Helvetica-Bold')
-      .text('ACCOUNT STATEMENT', 360, 20, { align: 'right', width: 205 })
+      .text('ACCOUNT STATEMENT', 365, 16, { align: 'right', width: 200 })
       .font('Helvetica')
       .fontSize(8.5)
       .fillColor('#64748B')
-      .text(`Date: ${Formatters.date(new Date())}`, 360, 38, { align: 'right', width: 205 })
-      .text(`Statement: Customer Khata`, 360, 50, { align: 'right', width: 205 })
-      .text(`Total Records: ${transactions.length}`, 360, 62, { align: 'right', width: 205 });
+      .text(`Date: ${Formatters.date(new Date())}`, 365, 34, { align: 'right', width: 200 })
+      .text(`Statement: Customer Khata`, 365, 46, { align: 'right', width: 200 })
+      .text(`Total Records: ${transactions.length}`, 365, 58, { align: 'right', width: 200 });
 
     // Header Divider
     doc.strokeColor('#E2E8F0').lineWidth(1).moveTo(30, 82).lineTo(565, 82).stroke();

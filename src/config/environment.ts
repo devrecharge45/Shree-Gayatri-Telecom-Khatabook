@@ -12,9 +12,7 @@ export interface ServerConfig {
 export interface CompanyConfig {
   name: string;
   phone: string;
-  email: string;
   address: string;
-  gst: string;
 }
 
 export interface DatabaseConfig {
@@ -52,9 +50,7 @@ export class Config {
     this.company = {
       name: process.env.COMPANY_NAME || 'Shree Gayatri Telecom',
       phone: process.env.COMPANY_PHONE || '+91 98765 43210',
-      email: process.env.COMPANY_EMAIL || 'contact@shreegayatritelecom.com',
-      address: process.env.COMPANY_ADDRESS || 'Main Market, Station Road, Opp. Telecom Tower',
-      gst: process.env.COMPANY_GST || '24AAACG1234F1Z5'
+      address: process.env.COMPANY_ADDRESS || 'Main Market, Station Road, Opp. Telecom Tower'
     };
 
     this.database = {

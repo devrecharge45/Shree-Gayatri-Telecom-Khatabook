@@ -7,7 +7,7 @@ A production-grade, offline-capable, server-side rendered (SSR) Ledger Managemen
 ## 🌟 Key Features
 
 1. **Company Branding & Config Driven by `.env`**:
-   - Company Name, Address, Phone, Email, and GSTIN configured dynamically via `.env`.
+   - Company Name, Address, and Phone configured dynamically via `.env`.
    - Global injection into all EJS templates, dynamic PWA Web Manifest, PDF reports, and Excel spreadsheets.
 2. **Parties as Main Home Page (No Separate Dashboard)**:
    - Direct redirect to `/parties` after authentication.
@@ -21,7 +21,7 @@ A production-grade, offline-capable, server-side rendered (SSR) Ledger Managemen
    - Atomic database transactions with running balance calculations.
    - Date range filtering, search notes/bill reference, and transaction deletion.
 4. **Branded Financial Reporting (PDF & Excel Exports)**:
-   - 📄 **PDF Report**: Audit-ready document featuring your local company logo, GSTIN, header metadata, summary statistics, and transaction history.
+   - 📄 **PDF Report**: Audit-ready document featuring your local company logo, header metadata, summary statistics, and transaction history.
    - 📊 **Excel (.xlsx) Report**: Formatted spreadsheet with formatted currency numbers (`₹#,##0.00`), company metadata, and Excel `SUM` formulas.
 5. **Profile & Secure Password Reset Flow (`/profile`)**:
    - Displays user details, total parties count, transaction count, and configured business metadata.
@@ -124,9 +124,7 @@ APP_URL=
 # Company Branding & Details (Appears on header, footer, PDF & Excel reports)
 COMPANY_NAME=""
 COMPANY_PHONE=""
-COMPANY_EMAIL=""
 COMPANY_ADDRESS=""
-COMPANY_GST=""
 
 # Database Configuration (PostgreSQL)
 DB_HOST=localhost

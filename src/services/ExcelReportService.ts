@@ -32,7 +32,7 @@ export class ExcelReportService {
 
     // 1. Company Header Rows
     sheet.addRow([env.company.name]);
-    sheet.addRow([`GSTIN: ${env.company.gst || 'N/A'} | Phone: ${env.company.phone || 'N/A'}`]);
+    sheet.addRow([`Phone: ${env.company.phone || 'N/A'}`]);
     sheet.addRow([env.company.address || '']);
     sheet.addRow([]);
 

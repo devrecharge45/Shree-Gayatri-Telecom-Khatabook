@@ -603,3 +603,42 @@
   color: var(--text-main);
   font-weight: 600;
 }
+
+/* Empty State Global Component */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  max-width: 48px !important;
+  max-height: 48px !important;
+  margin: 0 auto 1rem auto;
+  color: #94a3b8;
+  opacity: 0.6;
+  display: block;
+}
+
+.empty-state h3,
+.empty-state h4 {
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  max-width: 360px;
+  margin: 0 auto;
+  line-height: 1.45;
+}

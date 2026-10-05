@@ -55,18 +55,8 @@
         </div>
 
         <div class="company-meta-item">
-          <span class="company-meta-label">GSTIN</span>
-          <span class="company-meta-value"><%= company.gst || 'Not Configured' %></span>
-        </div>
-
-        <div class="company-meta-item">
           <span class="company-meta-label">Contact Phone</span>
           <span class="company-meta-value"><%= company.phone || '-' %></span>
-        </div>
-
-        <div class="company-meta-item">
-          <span class="company-meta-label">Contact Email</span>
-          <span class="company-meta-value"><%= company.email || '-' %></span>
         </div>
 
         <div class="company-meta-item">
@@ -76,7 +66,7 @@
       </div>
 
       <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4;">
-        Note: Company branding and GST details are configured in <code>.env</code> and automatically appear on all generated PDF and Excel reports.
+        Note: Company branding details are configured in <code>.env</code> and automatically appear on all generated PDF and Excel reports.
       </p>
     </div>
   </div>
