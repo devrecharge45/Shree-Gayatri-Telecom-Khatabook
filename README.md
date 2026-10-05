@@ -7,7 +7,7 @@ A production-grade, offline-capable, server-side rendered (SSR) Ledger Managemen
 ## 🌟 Key Features
 
 1. **Company Branding & Config Driven by `.env`**:
-   - Company Name, Address, Phone, Email, and GSTIN configured dynamically via `.env`.
+   - Company Name, Address, and Phone configured dynamically via `.env`.
    - Global injection into all EJS templates, dynamic PWA Web Manifest, PDF reports, and Excel spreadsheets.
 2. **Parties as Main Home Page (No Separate Dashboard)**:
    - Direct redirect to `/parties` after authentication.
@@ -21,7 +21,7 @@ A production-grade, offline-capable, server-side rendered (SSR) Ledger Managemen
    - Atomic database transactions with running balance calculations.
    - Date range filtering, search notes/bill reference, and transaction deletion.
 4. **Branded Financial Reporting (PDF & Excel Exports)**:
-   - 📄 **PDF Report**: Audit-ready document featuring your local company logo, GSTIN, header metadata, summary statistics, and transaction history.
+   - 📄 **PDF Report**: Audit-ready document featuring your local company logo, header metadata, summary statistics, and transaction history.
    - 📊 **Excel (.xlsx) Report**: Formatted spreadsheet with formatted currency numbers (`₹#,##0.00`), company metadata, and Excel `SUM` formulas.
 5. **Profile & Secure Password Reset Flow (`/profile`)**:
    - Displays user details, total parties count, transaction count, and configured business metadata.
@@ -124,9 +124,7 @@ APP_URL=
 # Company Branding & Details (Appears on header, footer, PDF & Excel reports)
 COMPANY_NAME=""
 COMPANY_PHONE=""
-COMPANY_EMAIL=""
 COMPANY_ADDRESS=""
-COMPANY_GST=""
 
 # Database Configuration (PostgreSQL)
 DB_HOST=localhost
@@ -137,7 +135,7 @@ DB_NAME=khatabook_db
 
 # Security & JWT Configuration
 JWT_SECRET=super_secure_jwt_signing_key_change_in_production_2026
-JWT_EXPIRES_IN=7d
+JWT_EXPIRES_IN=15d
 COOKIE_SECRET=super_secure_cookie_secret_key_change_me
 SESSION_SECRET=super_secure_session_secret_key_change_me
 ```
@@ -224,8 +222,27 @@ npm run format:check
 
 - **Helmet**: Hardened HTTP response headers with a tailored Content Security Policy.
 - **Rate Limiting**: Protects `/login` and `/register` against brute-force attacks.
-- **Cookie Security**: Auth JWT stored in `HttpOnly`, `SameSite=Strict`, `Secure` cookies.
+- **Cookie Security**: Auth JWT stored in `HttpOnly`, `SameSite=Lax`, `Secure` cookies with 15-day persistent session support.
 - **SQL Injection Prevention**: All database queries strictly parameterized via Sequelize ORM.
 - **IDOR Protection**: All party and ledger operations strictly scoped to the authenticated `user_id`.
 - **Centralized Error Interceptor**: Catches and translates database constraints into friendly user messages.
 - **Input Sanitization**: All incoming form bodies validated and XSS-sanitized via `express-validator`.
+
+---
+
+## ⚡ Keepalive & Health Check API (UptimeRobot / Render / Supabase)
+
+To prevent your Render web service and Supabase PostgreSQL database from sleeping or pausing:
+
+- **Endpoint**: `GET /health`
+- **Behavior**:
+  - Resets Render's 15-minute inactivity idle timer by receiving incoming HTTP traffic.
+  - Automatically queries Supabase (`SELECT 1;`) to keep database connections warm and prevent database sleep.
+  - Returns JSON with database connection status, latency, and uptime.
+- **UptimeRobot Setup**:
+  1. Create a new monitor on [UptimeRobot](https://uptimerobot.com/).
+  2. **Monitor Type**: `HTTP(s)`
+  3. **URL**: `https://<your-render-app>.onrender.com/health`
+  4. **Monitoring Interval**: `Every 1 or 2 minutes` (e.g. 2 min)
+  5. **HTTP Method**: `GET` or `HEAD`
+

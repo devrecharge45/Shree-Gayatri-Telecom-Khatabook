@@ -44,7 +44,7 @@ export class ProfileController {
       // Force Logout per requirement: "reset password then logout"
       res.clearCookie('auth_token', {
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         secure: env.server.nodeEnv === 'production'
       });
 

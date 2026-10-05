@@ -62,8 +62,10 @@ export class App {
         resave: false,
         saveUninitialized: false,
         cookie: {
+          httpOnly: true,
+          sameSite: 'lax',
           secure: env.server.nodeEnv === 'production',
-          maxAge: 24 * 60 * 60 * 1000 // 1 day
+          maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
         }
       })
     );
@@ -115,7 +117,6 @@ export class App {
         Logger.info(`  Local URL   : http://localhost:${port}`);
         Logger.info(`  External URL: http://[IP_ADDRESS]:${port}`);
         Logger.info(`  Company     : ${env.company.name}`);
-        Logger.info(`  GSTIN       : ${env.company.gst}`);
         Logger.info(`=======================================================`);
       });
     } catch (err: unknown) {

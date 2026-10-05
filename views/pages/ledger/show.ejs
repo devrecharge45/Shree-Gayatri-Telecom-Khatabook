@@ -21,9 +21,9 @@
         <!-- Realtime Status Pill Beside Name -->
         <div class="header-balance-pill">
           <% if (bal > 0) { %>
-            <span class="badge badge-credit">₹<%= formatters.currency(bal) %> You'll Get</span>
+            <span class="badge badge-credit"><%= formatters.currency(bal) %> You'll Get</span>
           <% } else if (bal < 0) { %>
-            <span class="badge badge-debit">₹<%= formatters.currency(Math.abs(bal)) %> You'll Give</span>
+            <span class="badge badge-debit"><%= formatters.currency(Math.abs(bal)) %> You'll Give</span>
           <% } else { %>
             <span class="badge badge-settled">Settled (₹0)</span>
           <% } %>
@@ -381,7 +381,7 @@
       <% }); %>
     <% } else { %>
       <div class="empty-state" style="padding: 3rem 1.5rem;">
-        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         <h4 style="font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">No Transactions Found</h4>
         <p style="font-size: 0.85rem; color: var(--text-muted);">Record your first credit or debit transaction using the buttons below.</p>
       </div>
@@ -449,13 +449,13 @@
 <aside class="ledger-bottom-dock">
   <div class="dock-inner">
     <button type="button" class="btn btn-debit dock-btn" data-open-modal="debitModal">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-      YOU GAVE ₹ (DEBIT)
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+      <span>YOU GAVE ₹ <span class="dock-subtext">(DEBIT)</span></span>
     </button>
 
     <button type="button" class="btn btn-credit dock-btn" data-open-modal="creditModal">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-      YOU GOT ₹ (CREDIT)
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      <span>YOU GOT ₹ <span class="dock-subtext">(CREDIT)</span></span>
     </button>
   </div>
 </aside>

@@ -1,301 +1,309 @@
 <%- include('../../layouts/header') %>
 
-<!-- Top Summary Cards -->
-<section class="dashboard-grid">
-  <!-- Net Balance -->
-  <div class="stat-card stat-net">
-    <span class="stat-label">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="4" x2="18" y2="4"></line><line x1="6" y1="9" x2="18" y2="9"></line><path d="M6 4h6a4 4 0 0 1 4 4c0 2.2-1.8 4-4 4H6"></path><line x1="10" y1="13" x2="16" y2="20"></line></svg>
-      Net Balance
-    </span>
-    <span class="stat-value" style="color: <%= stats.netBalance >= 0 ? 'var(--color-credit)' : 'var(--color-debit)' %>">
-      <%= formatters.currency(stats.netBalance) %>
-    </span>
-    <span class="stat-subtext">Overall business ledger standing</span>
-  </div>
-
-  <!-- Total You Will Get -->
-  <div class="stat-card stat-receive">
-    <span class="stat-label" style="color: var(--color-credit);">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-      You Will Get
-    </span>
-    <span class="stat-value" style="color: var(--color-credit);">
-      <%= formatters.currency(stats.totalToReceive) %>
-    </span>
-    <span class="stat-subtext">Receivables from <%= stats.totalParties %> parties</span>
-  </div>
-
-  <!-- Total You Will Give -->
-  <div class="stat-card stat-give">
-    <span class="stat-label" style="color: var(--color-debit);">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-      You Will Give
-    </span>
-    <span class="stat-value" style="color: var(--color-debit);">
-      <%= formatters.currency(stats.totalToGive) %>
-    </span>
-    <span class="stat-subtext">Payables / Advances</span>
-  </div>
-</section>
-
-<!-- Action Bar: Search, Filters & Add Party -->
-<section class="parties-action-bar">
-  <div class="action-bar-top">
-    <!-- Search Form -->
-    <form action="/parties" method="GET" class="search-input-wrapper">
-      <input type="hidden" name="filter" value="<%= filter %>">
-      <input type="hidden" name="limit" value="<%= limit %>">
-      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input 
-        type="text" 
-        name="search" 
-        id="partySearchInput"
-        class="form-control search-input" 
-        placeholder="Search by name or phone..." 
-        value="<%= search %>"
-      >
-      <% if (search) { %>
-        <a href="/parties?filter=<%= filter %>&limit=<%= limit %>" class="search-clear-btn" title="Clear Search">&times;</a>
-      <% } %>
-    </form>
-
-    <!-- + Add Party Button -->
-    <button type="button" class="btn btn-primary btn-add-party" data-open-modal="addPartyModal">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-      <span class="btn-add-label">Add Party</span>
-    </button>
-  </div>
-
-  <!-- Filter Pills & Page Limit Controls (Single Row Across All Screens) -->
-  <div class="parties-filters-row">
-    <div class="filter-pills">
-      <a href="/parties?filter=all<%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="filter-pill <%= filter === 'all' ? 'active' : '' %>">
-        All (<%= totalCount %>)
-      </a>
-      <a href="/parties?filter=get<%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="filter-pill <%= filter === 'get' ? 'active' : '' %>">
-        You'll Get
-      </a>
-      <a href="/parties?filter=give<%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="filter-pill <%= filter === 'give' ? 'active' : '' %>">
-        You'll Give
-      </a>
-      <a href="/parties?filter=settled<%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="filter-pill <%= filter === 'settled' ? 'active' : '' %>">
-        Settled
-      </a>
+  <!-- Top Summary Cards -->
+  <section class="dashboard-grid">
+    <!-- Net Balance -->
+    <div class="stat-card stat-net">
+      <span class="stat-label">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="4" x2="18" y2="4"></line>
+          <line x1="6" y1="9" x2="18" y2="9"></line>
+          <path d="M6 4h6a4 4 0 0 1 4 4c0 2.2-1.8 4-4 4H6"></path>
+          <line x1="10" y1="13" x2="16" y2="20"></line>
+        </svg>
+        Net Balance
+      </span>
+      <span class="stat-value"
+        style="color: <%= stats.netBalance >= 0 ? 'var(--color-credit)' : 'var(--color-debit)' %>">
+        <%= formatters.currency(stats.netBalance) %>
+      </span>
+      <span class="stat-subtext">Overall business ledger standing</span>
     </div>
 
-    <!-- Page Limit Dropdown (10, 20, 30, 50, 100) -->
-    <div class="parties-limit-wrapper">
-      <label for="partiesLimitSelect" class="limit-label desktop-only">Show:</label>
-      <select 
-        id="partiesLimitSelect" 
-        class="form-control limit-dropdown" 
-        onchange="window.location.href='/parties?page=1&limit=' + this.value + '<%= filter ? '&filter=' + filter : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>'"
-      >
-        <option value="10" <%= limit === 10 ? 'selected' : '' %>>10 / page</option>
-        <option value="20" <%= limit === 20 ? 'selected' : '' %>>20 / page</option>
-        <option value="30" <%= limit === 30 ? 'selected' : '' %>>30 / page</option>
-        <option value="50" <%= limit === 50 ? 'selected' : '' %>>50 / page</option>
-        <option value="100" <%= limit === 100 ? 'selected' : '' %>>100 / page</option>
-      </select>
+    <!-- Total You Will Get -->
+    <div class="stat-card stat-receive">
+      <span class="stat-label" style="color: var(--color-credit);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+        You Will Get
+      </span>
+      <span class="stat-value" style="color: var(--color-credit);">
+        <%= formatters.currency(stats.totalToReceive) %>
+      </span>
+      <span class="stat-subtext">Receivables from <%= stats.totalParties %> parties</span>
     </div>
-  </div>
-</section>
 
-<!-- Party List -->
-<section class="party-list-container">
-  <% if (parties && parties.length > 0) { %>
-    <% parties.forEach(party => { %>
-      <% const bal = Number(party.current_balance) || 0; %>
-      <div class="party-item-wrapper">
-        <a href="/parties/<%= party.id %>/ledger" class="party-item">
-          <div class="party-left">
-            <div class="party-avatar">
-              <%= formatters.initials(party.name) %>
-            </div>
-            <div class="party-info">
-              <span class="party-name"><%= party.name %></span>
-              <span class="party-meta">
-                <% if (party.mobile_no) { %>
-                  <span class="party-phone-text">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                    <%= party.mobile_no %>
-                  </span>
-                  <span class="meta-dot">•</span>
-                <% } %>
-                <span>Updated <%= formatters.date(party.updated_at) %></span>
-              </span>
-            </div>
-          </div>
+    <!-- Total You Will Give -->
+    <div class="stat-card stat-give">
+      <span class="stat-label" style="color: var(--color-debit);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+        You Will Give
+      </span>
+      <span class="stat-value" style="color: var(--color-debit);">
+        <%= formatters.currency(stats.totalToGive) %>
+      </span>
+      <span class="stat-subtext">Payables / Advances</span>
+    </div>
+  </section>
 
-          <div class="party-right">
-            <% if (bal > 0) { %>
-              <span class="party-balance-amount" style="color: var(--color-credit);">
-                <%= formatters.currency(bal) %>
-              </span>
-              <span class="party-balance-status" style="color: var(--color-credit);">You will get</span>
-            <% } else if (bal < 0) { %>
-              <span class="party-balance-amount" style="color: var(--color-debit);">
-                <%= formatters.currency(Math.abs(bal)) %>
-              </span>
-              <span class="party-balance-status" style="color: var(--color-debit);">You will give</span>
-            <% } else { %>
-              <span class="party-balance-amount" style="color: var(--text-muted);">
-                ₹0.00
-              </span>
-              <span class="party-balance-status" style="color: var(--text-muted);">Settled</span>
-            <% } %>
-
-            <span class="party-chevron" aria-hidden="true">&rsaquo;</span>
-          </div>
-        </a>
-
-        <% if (party.mobile_no) { %>
-          <!-- Mobile Quick Action Shortcuts -->
-          <div class="party-quick-bar">
-            <a href="tel:<%= party.mobile_no %>" class="btn-quick-touch btn-touch-call" title="Call <%= party.name %>">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              <span>Call</span>
-            </a>
-            <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=Hello%20<%= encodeURIComponent(party.name) %>,%20your%20current%20ledger%20balance%20with%20<%= encodeURIComponent(company.name) %>%20is%20<%= formatters.currency(Math.abs(party.current_balance)) %>." target="_blank" class="btn-quick-touch btn-touch-wa" title="WhatsApp <%= party.name %>">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.983.538 1.83.824 2.791.824 3.182 0 5.768-2.587 5.768-5.767.001-3.18-2.584-5.769-5.768-5.769zm3.385 8.167c-.145.408-.724.747-1.189.847-.32.069-.738.125-2.144-.457-1.798-.744-2.956-2.57-3.045-2.689-.089-.119-.729-.97-.729-1.85 0-.88.461-1.312.625-1.488.164-.176.357-.22.476-.22.12 0 .239.001.343.006.109.006.257-.041.401.306.149.357.509 1.242.553 1.332.045.089.074.194.015.313-.059.119-.089.194-.178.298-.089.104-.188.232-.268.312-.089.089-.182.186-.078.365.104.179.463.764.994 1.237.684.609 1.261.798 1.44.887.179.089.283.075.388-.045.104-.119.447-.521.566-.7.119-.179.239-.149.402-.089.164.06 1.041.491 1.22.58.179.089.298.134.343.209.045.074.045.432-.1 1.044z"/></svg>
-              <span>WhatsApp</span>
-            </a>
-            <a href="/parties/<%= party.id %>/edit" class="btn-quick-touch btn-touch-edit" title="Edit <%= party.name %>">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              <span>Edit</span>
-            </a>
-          </div>
-        <% } %>
-      </div>
-    <% }); %>
-
-    <!-- Server-Side Numbered Pagination -->
-    <% if (totalPages > 1) { 
-      let pages = [];
-      if (totalPages <= 7) {
-        for (let p = 1; p <= totalPages; p++) pages.push(p);
-      } else {
-        pages.push(1);
-        let start = Math.max(2, currentPage - 1);
-        let end = Math.min(totalPages - 1, currentPage + 1);
-        
-        if (currentPage <= 3) {
-          start = 2;
-          end = 4;
-        } else if (currentPage >= totalPages - 2) {
-          start = totalPages - 3;
-          end = totalPages - 1;
-        }
-        
-        if (start > 2) pages.push('...');
-        for (let p = start; p <= end; p++) pages.push(p);
-        if (end < totalPages - 1) pages.push('...');
-        pages.push(totalPages);
-      }
-    %>
-      <div class="pagination" style="padding: 1.25rem;">
-        <div>Page <%= currentPage %> of <%= totalPages %> (Total <%= totalCount %> parties)</div>
-        <div class="pagination-controls">
-          <% if (currentPage > 1) { %>
-            <a href="/parties?page=<%= currentPage - 1 %><%= filter ? '&filter=' + filter : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="page-btn" title="Previous Page">
-              &larr;
-            </a>
-          <% } else { %>
-            <span class="page-btn disabled">&larr;</span>
+  <!-- Action Bar: Search, Filters & Add Party -->
+  <section class="parties-action-bar">
+    <div class="action-bar-top">
+      <!-- Search Form -->
+      <form action="/parties" method="GET" class="search-input-wrapper">
+        <input type="hidden" name="limit" value="<%= limit %>">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" name="search" id="partySearchInput" class="form-control search-input"
+          placeholder="Search by name or phone..." value="<%= search %>">
+        <% if (search) { %>
+          <a href="/parties?limit=<%= limit %>" class="search-clear-btn" title="Clear Search">&times;</a>
           <% } %>
+      </form>
 
-          <% pages.forEach(function(p) { %>
-            <% if (p === '...') { %>
-              <span class="page-dots">...</span>
-            <% } else { %>
-              <a href="/parties?page=<%= p %><%= filter ? '&filter=' + filter : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="page-btn <%= p === currentPage ? 'active' : '' %>">
-                <%= p %>
-              </a>
-            <% } %>
-          <% }); %>
-
-          <% if (currentPage < totalPages) { %>
-            <a href="/parties?page=<%= currentPage + 1 %><%= filter ? '&filter=' + filter : '' %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>" class="page-btn" title="Next Page">
-              &rarr;
-            </a>
-          <% } else { %>
-            <span class="page-btn disabled">&rarr;</span>
-          <% } %>
-        </div>
-      </div>
-    <% } %>
-
-  <% } else { %>
-    <div class="empty-state">
-      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-      <h3>No Parties Found</h3>
-      <p style="margin-top: 0.25rem;">
-        <%= search ? `No results match "${search}"` : 'Start your ledger by adding your first customer or supplier.' %>
-      </p>
-      <button type="button" class="btn btn-primary" data-open-modal="addPartyModal" style="margin-top: 1rem;">
-        + Add New Party
+      <!-- + Add Party Button -->
+      <button type="button" class="btn btn-primary btn-add-party" data-open-modal="addPartyModal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span class="btn-add-label">Add Party</span>
       </button>
     </div>
-  <% } %>
-</section>
 
-<!-- Add Party Modal -->
-<div id="addPartyModal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title">Add New Party</h2>
-      <button type="button" class="alert-close" data-close-modal>&times;</button>
+    <!-- Page Limit Controls -->
+    <div class="parties-filters-row">
+      <div class="parties-count-badge">
+        Total Parties: <strong>
+          <%= totalCount %>
+        </strong>
+      </div>
+
+      <!-- Page Limit Dropdown (10, 20, 30, 50, 100) -->
+      <div class="parties-limit-wrapper">
+        <label for="partiesLimitSelect" class="limit-label desktop-only">Show:</label>
+        <select id="partiesLimitSelect" class="form-control limit-dropdown"
+          onchange="window.location.href='/parties?page=1&limit=' + this.value + '<%= search ? '&search=' + encodeURIComponent(search) : '' %>'">
+          <option value="10" <%=limit===10 ? 'selected' : '' %>>10 / page</option>
+          <option value="20" <%=limit===20 ? 'selected' : '' %>>20 / page</option>
+          <option value="30" <%=limit===30 ? 'selected' : '' %>>30 / page</option>
+          <option value="50" <%=limit===50 ? 'selected' : '' %>>50 / page</option>
+          <option value="100" <%=limit===100 ? 'selected' : '' %>>100 / page</option>
+        </select>
+      </div>
     </div>
-    
-    <form action="/parties" method="POST">
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="party_name" class="form-label required">Party Name</label>
-          <input 
-            type="text" 
-            id="party_name" 
-            name="name" 
-            class="form-control" 
-            placeholder="e.g. Rahul Sharma" 
-            required 
-            autofocus
-          >
-          <span class="form-text-muted">Party or customer business name (Mandatory)</span>
-        </div>
+  </section>
 
-        <div class="form-group">
-          <label for="party_mobile" class="form-label">Mobile Number</label>
-          <input 
-            type="tel" 
-            id="party_mobile" 
-            name="mobile_no" 
-            class="form-control" 
-            placeholder="10-digit mobile number" 
-            pattern="[6-9][0-9]{9}"
-          >
-          <span class="form-text-muted">Optional: For sending payment reminders via WhatsApp/SMS</span>
-        </div>
+  <!-- Party List -->
+  <section class="party-list-container">
+    <% if (parties && parties.length> 0) { %>
+      <% parties.forEach(party=> { %>
+        <% const bal=Number(party.current_balance) || 0; %>
+          <div class="party-item-wrapper">
+            <a href="/parties/<%= party.id %>/ledger" class="party-item">
+              <div class="party-left">
+                <div class="party-avatar">
+                  <%= formatters.initials(party.name) %>
+                </div>
+                <div class="party-info">
+                  <span class="party-name">
+                    <%= party.name %>
+                  </span>
+                  <span class="party-meta">
+                    <% if (party.mobile_no) { %>
+                      <span class="party-phone-text">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                          </path>
+                        </svg>
+                        <%= party.mobile_no %>
+                      </span>
+                      <span class="meta-dot">•</span>
+                      <% } %>
+                        <span>Updated <%= formatters.date(party.updated_at) %></span>
+                  </span>
+                </div>
+              </div>
 
-        <div class="form-group">
-          <label for="party_notes" class="form-label">Notes</label>
-          <textarea 
-            id="party_notes" 
-            name="notes" 
-            class="form-control" 
-            rows="3" 
-            placeholder="e.g. Wholesaler for mobile accessories, credit limit ₹50,000"
-          ></textarea>
-          <span class="form-text-muted">Optional: Any special conditions or reference</span>
-        </div>
+              <div class="party-right">
+                <div class="party-balance-block">
+                  <% if (bal> 0) { %>
+                    <span class="party-balance-amount" style="color: var(--color-credit);">
+                      <%= formatters.currency(bal) %>
+                    </span>
+                    <span class="party-balance-status" style="color: var(--color-credit);">You will get</span>
+                  <% } else if (bal < 0) { %>
+                    <span class="party-balance-amount" style="color: var(--color-debit);">
+                      <%= formatters.currency(Math.abs(bal)) %>
+                    </span>
+                    <span class="party-balance-status" style="color: var(--color-debit);">You will give</span>
+                  <% } else { %>
+                    <span class="party-balance-amount" style="color: var(--text-muted);">
+                      ₹0.00
+                    </span>
+                    <span class="party-balance-status" style="color: var(--text-muted);">Settled</span>
+                  <% } %>
+                </div>
+
+                <span class="party-chevron" aria-hidden="true">&rsaquo;</span>
+              </div>
+            </a>            <!-- Quick Action Shortcuts (Call & WhatsApp when phone exists, Edit always visible) -->
+            <div class="party-quick-bar">
+              <% if (party.mobile_no) { %>
+                <a href="tel:<%= party.mobile_no %>" class="btn-quick-touch btn-touch-call"
+                  title="Call <%= party.name %>">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                    </path>
+                  </svg>
+                  <span>Call</span>
+                </a>
+                <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=Hello%20<%= encodeURIComponent(party.name) %>,%20your%20current%20ledger%20balance%20with%20<%= encodeURIComponent(company.name) %>%20is%20<%= formatters.currency(Math.abs(party.current_balance)) %>."
+                  target="_blank" class="btn-quick-touch btn-touch-wa" title="WhatsApp <%= party.name %>">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.983.538 1.83.824 2.791.824 3.182 0 5.768-2.587 5.768-5.767.001-3.18-2.584-5.769-5.768-5.769zm3.385 8.167c-.145.408-.724.747-1.189.847-.32.069-.738.125-2.144-.457-1.798-.744-2.956-2.57-3.045-2.689-.089-.119-.729-.97-.729-1.85 0-.88.461-1.312.625-1.488.164-.176.357-.22.476-.22.12 0 .239.001.343.006.109.006.257-.041.401.306.149.357.509 1.242.553 1.332.045.089.074.194.015.313-.059.119-.089.194-.178.298-.089.104-.188.232-.268.312-.089.089-.182.186-.078.365.104.179.463.764.994 1.237.684.609 1.261.798 1.44.887.179.089.283.075.388-.045.104-.119.447-.521.566-.7.119-.179.239-.149.402-.089.164.06 1.041.491 1.22.58.179.089.298.134.343.209.045.074.045.432-.1 1.044z" />
+                  </svg>
+                  <span>WhatsApp</span>
+                </a>
+              <% } %>
+              <a href="/parties/<%= party.id %>/edit" class="btn-quick-touch btn-touch-edit"
+                title="Edit <%= party.name %>">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                <span>Edit</span>
+              </a>
+            </div>
+          </div>
+          <% }); %>
+
+            <!-- Server-Side Numbered Pagination -->
+            <% if (totalPages> 1) {
+              let pages = [];
+              if (totalPages <= 7) { for (let p=1; p <=totalPages; p++) pages.push(p); } else { pages.push(1); let
+                start=Math.max(2, currentPage - 1); let end=Math.min(totalPages - 1, currentPage + 1); if (currentPage
+                <=3) { start=2; end=4; } else if (currentPage>= totalPages - 2) {
+                start = totalPages - 3;
+                end = totalPages - 1;
+                }
+
+                if (start > 2) pages.push('...');
+                for (let p = start; p <= end; p++) pages.push(p); if (end < totalPages - 1) pages.push('...');
+                  pages.push(totalPages); } %>
+                  <div class="pagination" style="padding: 1.25rem;">
+                    <div>Page <%= currentPage %> of <%= totalPages %> (Total <%= totalCount %> parties)</div>
+                    <div class="pagination-controls">
+                      <% if (currentPage> 1) { %>
+                        <a href="/parties?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>"
+                          class="page-btn" title="Previous Page">
+                          &larr;
+                        </a>
+                        <% } else { %>
+                          <span class="page-btn disabled">&larr;</span>
+                          <% } %>
+
+                            <% pages.forEach(function(p) { %>
+                              <% if (p==='...' ) { %>
+                                <span class="page-dots">...</span>
+                                <% } else { %>
+                                  <a href="/parties?page=<%= p %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>"
+                                    class="page-btn <%= p === currentPage ? 'active' : '' %>">
+                                    <%= p %>
+                                  </a>
+                                  <% } %>
+                                    <% }); %>
+
+                                      <% if (currentPage < totalPages) { %>
+                                        <a href="/parties?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>"
+                                          class="page-btn" title="Next Page">
+                                          &rarr;
+                                        </a>
+                                        <% } else { %>
+                                          <span class="page-btn disabled">&rarr;</span>
+                                          <% } %>
+                    </div>
+                  </div>
+                  <% } %>
+
+                    <% } else { %>
+                      <div class="empty-state">
+                        <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                          stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <h3>No Parties Found</h3>
+                        <p style="margin-top: 0.25rem;">
+                          <%= search ? `No results match "${search}" `
+                            : 'Start your ledger by adding your first customer or supplier.' %>
+                        </p>
+                        <button type="button" class="btn btn-primary" data-open-modal="addPartyModal"
+                          style="margin-top: 1rem;">
+                          + Add New Party
+                        </button>
+                      </div>
+                      <% } %>
+  </section>
+
+  <!-- Add Party Modal -->
+  <div id="addPartyModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Add New Party</h2>
+        <button type="button" class="alert-close" data-close-modal>&times;</button>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Party</button>
-      </div>
-    </form>
+      <form action="/parties" method="POST">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="party_name" class="form-label required">Party Name</label>
+            <input type="text" id="party_name" name="name" class="form-control" placeholder="e.g. Rahul Sharma" required
+              autofocus>
+            <span class="form-text-muted">Party or customer business name (Mandatory)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="party_mobile" class="form-label">Mobile Number</label>
+            <input type="tel" id="party_mobile" name="mobile_no" class="form-control"
+              placeholder="10-digit mobile number" pattern="[6-9][0-9]{9}">
+            <span class="form-text-muted">Optional: For sending payment reminders via WhatsApp/SMS</span>
+          </div>
+
+          <div class="form-group">
+            <label for="party_notes" class="form-label">Notes</label>
+            <textarea id="party_notes" name="notes" class="form-control" rows="3"
+              placeholder="e.g. Wholesaler for mobile accessories, credit limit ₹50,000"></textarea>
+            <span class="form-text-muted">Optional: Any special conditions or reference</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Party</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
-<%- include('../../layouts/footer') %>
+  <%- include('../../layouts/footer') %>

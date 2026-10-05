@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import healthRoutes from './health.routes';
 import authRoutes from './auth.routes';
 import partyRoutes from './party.routes';
 import transactionRoutes from './transaction.routes';
@@ -7,6 +8,9 @@ import profileRoutes from './profile.routes';
 import manifestRoutes from './manifest.routes';
 
 const router = Router();
+
+// Health check endpoint (for UptimeRobot / Render / Supabase keepalive)
+router.use('/', healthRoutes);
 
 // Dynamic PWA manifest
 router.use('/', manifestRoutes);
