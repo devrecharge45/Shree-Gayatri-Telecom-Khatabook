@@ -1,4 +1,4 @@
-import { Op, WhereOptions, InferAttributes } from 'sequelize';
+import { Op, WhereOptions, InferAttributes, Transaction as SequelizeTransaction } from 'sequelize';
 import { sequelize } from '../config/database';
 import { Transaction } from '../models/Transaction.model';
 import { Party } from '../models/Party.model';
@@ -18,12 +18,63 @@ export interface LedgerQueryParams {
 
 export class TransactionService {
   /**
-   * Fetch ledger transactions for a party with filters and pagination
+   * Recalculates running balances for all transactions of a party in chronological order,
+   * updates transaction.balance_after where needed, and sets party.current_balance.
+   */
+  public static async recalculatePartyBalances(
+    partyId: string,
+    userId: string,
+    t?: SequelizeTransaction
+  ): Promise<number> {
+    const transactions = await Transaction.findAll({
+      where: { party_id: partyId, user_id: userId },
+      order: [
+        ['transaction_date', 'ASC'],
+        ['created_at', 'ASC'],
+        ['id', 'ASC']
+      ],
+      transaction: t,
+      lock: t ? t.LOCK.UPDATE : undefined
+    });
+
+    let runningBalance = 0;
+
+    for (const tx of transactions) {
+      const amount = Number(tx.amount) || 0;
+      if (tx.type === TransactionType.DEBIT) {
+        runningBalance += amount;
+      } else {
+        runningBalance -= amount;
+      }
+      runningBalance = Math.round(runningBalance * 100) / 100;
+
+      if (Math.abs(Number(tx.balance_after) - runningBalance) > 0.0001) {
+        tx.balance_after = runningBalance;
+        await tx.save({ transaction: t });
+      }
+    }
+
+    runningBalance = Math.round(runningBalance * 100) / 100;
+
+    await Party.update(
+      { current_balance: runningBalance },
+      { where: { id: partyId, user_id: userId }, transaction: t }
+    );
+
+    return runningBalance;
+  }
+
+  /**
+   * Fetch ledger transactions for a party with filters and optional pagination
    */
   public static async getLedger(params: LedgerQueryParams) {
-    const page = Math.max(1, params.page || 1);
-    const limit = Math.min(100, Math.max(1, params.limit || 20));
-    const offset = (page - 1) * limit;
+    // Reconcile and heal running balance for this party if out-of-sync
+    await TransactionService.recalculatePartyBalances(params.partyId, params.userId);
+
+    const hasLimit = typeof params.limit === 'number' && params.limit > 0;
+    const page = hasLimit ? Math.max(1, params.page || 1) : 1;
+    const limit = hasLimit ? Math.max(1, params.limit!) : undefined;
+    const offset = hasLimit ? (page - 1) * limit! : undefined;
 
     const conditions: WhereOptions<InferAttributes<Transaction>>[] = [
       { party_id: params.partyId },
@@ -62,7 +113,8 @@ export class TransactionService {
       offset,
       order: [
         ['transaction_date', 'DESC'],
-        ['created_at', 'DESC']
+        ['created_at', 'DESC'],
+        ['id', 'DESC']
       ]
     });
 
@@ -70,8 +122,8 @@ export class TransactionService {
       transactions: rows,
       totalCount: count,
       currentPage: page,
-      totalPages: Math.ceil(count / limit),
-      limit
+      totalPages: limit ? Math.ceil(count / limit) : 1,
+      limit: limit || count
     };
   }
 
@@ -100,19 +152,7 @@ export class TransactionService {
         throw AppError.notFound('Party not found or access denied');
       }
 
-      // Ledger Formula:
-      // Current Balance = You Gave (Debit) - You Got (Credit)
-      // Positive Balance (+) = Customer Owes You
-      // Negative Balance (-) = You Owe Customer
-      let updatedBalance: number;
-      const currentBal = Number(party.current_balance) || 0;
       const txAmount = Number(data.amount);
-
-      if (data.type === TransactionType.DEBIT) {
-        updatedBalance = currentBal + txAmount; // You Gave: customer debt increases
-      } else {
-        updatedBalance = currentBal - txAmount; // You Got: customer debt decreases
-      }
 
       const transaction = await Transaction.create(
         {
@@ -123,15 +163,15 @@ export class TransactionService {
           transaction_date: data.transaction_date,
           notes: data.notes ? data.notes.trim() : null,
           bill_reference: data.bill_reference ? data.bill_reference.trim() : null,
-          balance_after: updatedBalance
+          balance_after: 0
         },
         { transaction: t }
       );
 
-      party.current_balance = updatedBalance;
-      await party.save({ transaction: t });
+      await TransactionService.recalculatePartyBalances(party.id, data.userId, t);
 
       await t.commit();
+      await transaction.reload();
       return transaction;
     } catch (err) {
       await t.rollback();
@@ -155,28 +195,11 @@ export class TransactionService {
         throw AppError.notFound('Transaction not found or access denied');
       }
 
-      const party = await Party.findOne({
-        where: { id: transaction.party_id, user_id: userId },
-        transaction: t,
-        lock: t.LOCK.UPDATE
-      });
+      const partyId = transaction.party_id;
 
-      if (!party) {
-        throw AppError.notFound('Associated party not found');
-      }
-
-      // Reverse balance calculation
-      const currentBal = Number(party.current_balance) || 0;
-      const txAmount = Number(transaction.amount);
-
-      if (transaction.type === TransactionType.DEBIT) {
-        party.current_balance = currentBal - txAmount;
-      } else {
-        party.current_balance = currentBal + txAmount;
-      }
-
-      await party.save({ transaction: t });
       await transaction.destroy({ transaction: t });
+
+      await TransactionService.recalculatePartyBalances(partyId, userId, t);
 
       await t.commit();
     } catch (err) {
@@ -210,50 +233,18 @@ export class TransactionService {
         throw AppError.notFound('Transaction not found or access denied');
       }
 
-      const party = await Party.findOne({
-        where: { id: data.partyId, user_id: data.userId },
-        transaction: t,
-        lock: t.LOCK.UPDATE
-      });
-
-      if (!party) {
-        throw AppError.notFound('Associated party not found');
-      }
-
-      const currentBal = Number(party.current_balance) || 0;
-      const oldAmount = Number(transaction.amount);
-      const newAmount = Number(data.amount);
-
-      // 1. Reverse the old transaction impact on party current_balance
-      let baseBal = currentBal;
-      if (transaction.type === TransactionType.DEBIT) {
-        baseBal -= oldAmount;
-      } else {
-        baseBal += oldAmount;
-      }
-
-      // 2. Apply the new transaction impact on party current_balance
-      let newBal = baseBal;
-      if (data.type === TransactionType.DEBIT) {
-        newBal += newAmount;
-      } else {
-        newBal -= newAmount;
-      }
-
-      // 3. Update the transaction record
       transaction.type = data.type;
-      transaction.amount = newAmount;
+      transaction.amount = Number(data.amount);
       transaction.transaction_date = data.transaction_date;
       transaction.notes = data.notes ? data.notes.trim() : null;
       transaction.bill_reference = data.bill_reference ? data.bill_reference.trim() : null;
-      transaction.balance_after = newBal;
-
-      party.current_balance = newBal;
 
       await transaction.save({ transaction: t });
-      await party.save({ transaction: t });
+
+      await TransactionService.recalculatePartyBalances(data.partyId, data.userId, t);
 
       await t.commit();
+      await transaction.reload();
       return transaction;
     } catch (err) {
       await t.rollback();

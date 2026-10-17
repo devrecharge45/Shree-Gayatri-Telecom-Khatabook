@@ -20,19 +20,18 @@ export class TransactionController {
       const startDate = (req.query.startDate as string) || '';
       const endDate = (req.query.endDate as string) || '';
 
-      const [party, ledgerData] = await Promise.all([
-        PartyService.getPartyById(partyId, userId),
-        TransactionService.getLedger({
-          partyId,
-          userId,
-          page,
-          limit,
-          search,
-          type,
-          startDate,
-          endDate
-        })
-      ]);
+      const ledgerData = await TransactionService.getLedger({
+        partyId,
+        userId,
+        page,
+        limit,
+        search,
+        type,
+        startDate,
+        endDate
+      });
+
+      const party = await PartyService.getPartyById(partyId, userId);
 
       res.render('pages/ledger/show', {
         title: `${party.name} Ledger - ${env.server.appShortName}`,

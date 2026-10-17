@@ -12,16 +12,20 @@ export class ReportController {
     try {
       const userId = req.user!.id;
       const partyId = req.params.partyId as string;
+      const startDate = (req.query.startDate as string) || '';
+      const endDate = (req.query.endDate as string) || '';
+      const type = (req.query.type as string) || '';
 
-      const [party, ledgerData] = await Promise.all([
-        PartyService.getPartyById(partyId, userId),
-        TransactionService.getLedger({
-          partyId,
-          userId,
-          page: 1,
-          limit: 1000 // Get complete statement for export
-        })
-      ]);
+      const ledgerData = await TransactionService.getLedger({
+        partyId,
+        userId,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+        type: type || undefined
+        // No limit passed -> exports complete statement
+      });
+
+      const party = await PartyService.getPartyById(partyId, userId);
 
       await PdfReportService.generateLedgerPdf(party, ledgerData.transactions, res);
     } catch (err) {
@@ -40,16 +44,20 @@ export class ReportController {
     try {
       const userId = req.user!.id;
       const partyId = req.params.partyId as string;
+      const startDate = (req.query.startDate as string) || '';
+      const endDate = (req.query.endDate as string) || '';
+      const type = (req.query.type as string) || '';
 
-      const [party, ledgerData] = await Promise.all([
-        PartyService.getPartyById(partyId, userId),
-        TransactionService.getLedger({
-          partyId,
-          userId,
-          page: 1,
-          limit: 1000
-        })
-      ]);
+      const ledgerData = await TransactionService.getLedger({
+        partyId,
+        userId,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+        type: type || undefined
+        // No limit passed -> exports complete statement
+      });
+
+      const party = await PartyService.getPartyById(partyId, userId);
 
       await ExcelReportService.generateLedgerExcel(party, ledgerData.transactions, res);
     } catch (err) {
