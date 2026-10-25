@@ -174,16 +174,14 @@
                       </a>
 
                       <% if (party.portal_access_enabled && party.mobile_no) { %>
-                        <% const portalLoginUrl=(app && app.appUrl ? app.appUrl : '' ) + '/portal/login?install=1' ;
-                          const actualPass=party.portal_password || '(Shopkeeper will provide PIN)' ; const
-                          passbookShareLines=[ `Namaste ${party.name} ji, 🙏`, ``, `📲 *${company.name} - Digital
-                          Passbook App*`, `Aapka live credit-debit hisaab check karne ke liye mobile app install
-                          karein:`, ``, `1️⃣ *Direct App Install & Login Link:*`, `👉 ${portalLoginUrl}`, ``, `2️⃣
-                          *Aapke Login Credentials:*`, `📱 *Mobile:* ${party.mobile_no}`, `🔑 *Password:*
-                          ${actualPass}`, ``, `💡 *Tip:* Link open karke *"Install App / Add to Home Screen"* dabayein,
-                          app direct aapke phone mein install ho jayegi!` ]; const
-                          passbookShareMsg=encodeURIComponent(passbookShareLines.join('\n')); %>
-                          <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=<%= passbookShareMsg %>"
+                        <% const passbookShareLink = formatters.passbookWhatsAppShareUrl({
+                          partyName: party.name,
+                          mobileNo: party.mobile_no,
+                          portalPassword: party.portal_password,
+                          companyName: company.name,
+                          appUrl: app ? app.appUrl : ''
+                        }); %>
+                          <a href="<%= passbookShareLink %>"
                             target="_blank" class="btn btn-secondary btn-sm"
                             style="color: #059669; border-color: rgba(16, 185, 129, 0.4); font-weight: 600;"
                             title="Share Mobile App Install Link & Credentials via WhatsApp">
