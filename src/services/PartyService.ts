@@ -111,14 +111,57 @@ export class PartyService {
    */
   public static async createParty(
     userId: string,
-    data: { name: string; mobile_no?: string; notes?: string }
+    data: {
+      name: string;
+      mobile_no?: string;
+      notes?: string;
+      portal_access_enabled?: boolean | string;
+      password?: string;
+    }
   ): Promise<Party> {
+    const cleanName = data.name.trim();
+    const cleanMobile = data.mobile_no && data.mobile_no.trim() ? data.mobile_no.trim() : null;
+    const cleanNotes = data.notes && data.notes.trim() ? data.notes.trim() : null;
+    const isPortalEnabled =
+      data.portal_access_enabled === true ||
+      data.portal_access_enabled === 'true' ||
+      data.portal_access_enabled === 'on';
+
+    // 1. Enforce unique mobile number per admin
+    if (cleanMobile) {
+      const existing = await Party.findOne({
+        where: { user_id: userId, mobile_no: cleanMobile }
+      });
+      if (existing) {
+        throw AppError.badRequest(
+          `A party with mobile number "${cleanMobile}" already exists in your Khatabook.`
+        );
+      }
+    }
+
+    // 2. Validate portal access requirements
+    let passwordHash: string | null = null;
+    let plainPassword: string | null = null;
+    if (isPortalEnabled) {
+      if (!cleanMobile) {
+        throw AppError.badRequest('Mobile number is required to enable Customer Portal access.');
+      }
+      if (!data.password || data.password.trim().length < 4) {
+        throw AppError.badRequest('Portal password must be at least 4 characters long.');
+      }
+      plainPassword = data.password.trim();
+      passwordHash = await Party.hashPassword(plainPassword);
+    }
+
     return Party.create({
       user_id: userId,
-      name: data.name.trim(),
-      mobile_no: data.mobile_no ? data.mobile_no.trim() : null,
-      notes: data.notes ? data.notes.trim() : null,
-      current_balance: 0.0
+      name: cleanName,
+      mobile_no: cleanMobile,
+      notes: cleanNotes,
+      current_balance: 0.0,
+      portal_access_enabled: isPortalEnabled,
+      password_hash: passwordHash,
+      portal_password: plainPassword
     });
   }
 
@@ -128,12 +171,66 @@ export class PartyService {
   public static async updateParty(
     partyId: string,
     userId: string,
-    data: { name: string; mobile_no?: string; notes?: string }
+    data: {
+      name: string;
+      mobile_no?: string;
+      notes?: string;
+      portal_access_enabled?: boolean | string;
+      password?: string;
+    }
   ): Promise<Party> {
     const party = await this.getPartyById(partyId, userId);
-    party.name = data.name.trim();
-    party.mobile_no = data.mobile_no ? data.mobile_no.trim() : null;
-    party.notes = data.notes ? data.notes.trim() : null;
+    const cleanName = data.name.trim();
+    const cleanMobile = data.mobile_no && data.mobile_no.trim() ? data.mobile_no.trim() : null;
+    const cleanNotes = data.notes && data.notes.trim() ? data.notes.trim() : null;
+    const isPortalEnabled =
+      data.portal_access_enabled === true ||
+      data.portal_access_enabled === 'true' ||
+      data.portal_access_enabled === 'on';
+
+    // 1. Enforce unique mobile per admin (excluding this party)
+    if (cleanMobile) {
+      const existing = await Party.findOne({
+        where: {
+          user_id: userId,
+          mobile_no: cleanMobile,
+          id: { [Op.ne]: partyId }
+        }
+      });
+      if (existing) {
+        throw AppError.badRequest(
+          `Another party with mobile number "${cleanMobile}" already exists in your Khatabook.`
+        );
+      }
+    }
+
+    // 2. Portal access validation
+    if (isPortalEnabled) {
+      if (!cleanMobile) {
+        throw AppError.badRequest(
+          'Mobile number is required when Customer Portal access is enabled.'
+        );
+      }
+      // If a new password is provided, hash and update it
+      if (data.password && data.password.trim().length > 0) {
+        if (data.password.trim().length < 4) {
+          throw AppError.badRequest('Portal password must be at least 4 characters long.');
+        }
+        const plain = data.password.trim();
+        party.portal_password = plain;
+        party.password_hash = await Party.hashPassword(plain);
+      } else if (!party.password_hash) {
+        // If enabling for the first time without an existing password
+        throw AppError.badRequest('Please set a portal password to enable Customer Portal access.');
+      }
+      party.portal_access_enabled = true;
+    } else {
+      party.portal_access_enabled = false;
+    }
+
+    party.name = cleanName;
+    party.mobile_no = cleanMobile;
+    party.notes = cleanNotes;
     await party.save();
     return party;
   }

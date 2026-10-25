@@ -1,7 +1,7 @@
   </main>
 
-  <!-- Mobile Bottom Navigation Bar (Hidden on Ledger Page where Action Dock is active) -->
-  <% if (typeof currentUser !== 'undefined' && currentUser && typeof currentPath !== 'undefined' && !currentPath.includes('/ledger')) { %>
+  <!-- Mobile Bottom Navigation Bar (Hidden on Ledger Page where Action Dock is active and on Customer Portal) -->
+  <% if (typeof currentUser !== 'undefined' && currentUser && typeof currentPath !== 'undefined' && !currentPath.includes('/ledger') && !currentPath.includes('/portal')) { %>
     <nav class="bottom-nav">
       <div class="bottom-nav-inner">
         <a href="/parties" class="bottom-nav-item <%= currentPath === '/parties' ? 'active' : '' %>">
@@ -23,7 +23,7 @@
   <% } %>
 
   <!-- Footer -->
-  <footer class="app-footer <%= (typeof currentUser !== 'undefined' && currentUser) ? 'has-bottom-bar' : '' %>">
+  <footer class="app-footer <%= (typeof currentUser !== 'undefined' && currentUser && typeof currentPath !== 'undefined' && !currentPath.includes('/ledger') && !currentPath.includes('/portal')) ? 'has-bottom-bar' : '' %>">
     <div class="footer-company"><%= company.name %></div>
     <div class="footer-contact">
       <% if (company.address) { %>

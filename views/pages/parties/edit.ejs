@@ -1,71 +1,251 @@
 <%- include('../../layouts/header') %>
 
-<%- include('../../layouts/breadcrumbs', {
-  breadcrumbs: [
-    { label: 'Parties', url: '/parties' },
-    { label: party.name, url: '/parties/' + party.id + '/ledger' },
-    { label: 'Edit Party' }
-  ]
-}) %>
+  <%- include('../../layouts/breadcrumbs', { breadcrumbs: [ { label: 'Parties' , url: '/parties' }, { label: party.name,
+    url: '/parties/' + party.id + '/ledger' }, { label: 'Edit Party' } ] }) %>
 
-<div style="max-width: 600px; margin: 0 auto;">
-  <div class="card">
-    <div class="card-header">
-      <h1 class="card-title">Edit Party Details</h1>
-      <a href="/parties/<%= party.id %>/ledger" class="btn btn-secondary btn-sm">Cancel</a>
+    <div style="max-width: 600px; margin: 0 auto;">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title">Edit Party Details</h1>
+          <a href="/parties/<%= party.id %>/ledger" class="btn btn-secondary btn-sm">Cancel</a>
+        </div>
+
+        <form action="/parties/<%= party.id %>/edit" method="POST">
+          <div class="form-group">
+            <label for="name" class="form-label required">Party Name</label>
+            <input type="text" id="name" name="name" class="form-control" value="<%= party.name %>" required autofocus>
+          </div>
+
+          <div class="form-group">
+            <label for="mobile_no" class="form-label">Mobile Number</label>
+            <input type="tel" id="mobile_no" name="mobile_no" class="form-control" value="<%= party.mobile_no || '' %>"
+              pattern="[6-9][0-9]{9}">
+          </div>
+
+          <div class="form-group">
+            <label for="notes" class="form-label">Notes</label>
+            <textarea id="notes" name="notes" class="form-control" rows="3"><%= party.notes || '' %></textarea>
+          </div>
+
+          <!-- Customer Portal / Passbook Login Management -->
+          <div
+            style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px; padding: 1.25rem; margin-top: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label for="portal_access_enabled"
+                style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="portal_access_enabled" name="portal_access_enabled" value="true"
+                  <%=party.portal_access_enabled ? 'checked' : '' %>
+                style="width: 18px; height: 18px; accent-color: var(--primary-color);"
+                >
+                Enable Customer Passbook Login
+              </label>
+              <% if (party.portal_access_enabled) { %>
+                <span class="badge badge-credit" style="font-size: 0.75rem;">Portal Active</span>
+                <% } else { %>
+                  <span class="badge badge-settled" style="font-size: 0.75rem;">Inactive</span>
+                  <% } %>
+            </div>
+            <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Allows <%= party.name %> to log in at <code>/portal/login</code> with their mobile number to view their
+                credit/debit passbook.
+            </p>
+
+            <div id="portalPasswordGroup" style="<%= party.portal_access_enabled ? '' : 'display: none;' %>">
+              <% if (party.portal_password) { %>
+                <!-- Currently Saved Password Display -->
+                <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
+                  <div>
+                    <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); display: block; letter-spacing: 0.5px;">Current Active Password</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
+                      <span id="currentPasswordMasked" style="font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--text-main);">••••••••</span>
+                      <span id="currentPasswordPlain" style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--color-primary); display: none;"><%= party.portal_password %></span>
+                    </div>
+                  </div>
+                  <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <button type="button" id="btnRevealCurrentPass" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <span id="revealBtnText">Show Password</span>
+                    </button>
+                    <button type="button" id="btnCopyCurrentPass" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;" data-clipboard="<%= party.portal_password %>">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <span id="copyBtnText">Copy</span>
+                    </button>
+                  </div>
+                </div>
+              <% } %>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="party_password" class="form-label">
+                  <%= party.password_hash ? 'Reset / Update Password (Leave empty to keep current)' : 'Set Customer Password / PIN' %>
+                </label>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <div style="position: relative; flex: 1; min-width: 180px;">
+                    <input type="text" id="party_password" name="password" class="form-control"
+                      placeholder="<%= party.password_hash ? 'Enter new password only if changing' : 'e.g. Khat@8492 or 6-digit PIN' %>"
+                      autocomplete="off" style="padding-right: 2.5rem; font-family: monospace; font-size: 0.95rem; font-weight: 600;">
+                    <button type="button" id="togglePartyPassword" title="Show / Hide Password"
+                      style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center;">
+                      <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <svg id="eyeIconClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <div style="display: inline-flex; gap: 0.35rem;">
+                    <button type="button" id="btnGenStrongPassword" class="btn btn-secondary btn-sm"
+                      title="Generate high security password" style="white-space: nowrap; font-weight: 600;">
+                      🔒 Strong Password
+                    </button>
+                    <button type="button" id="btnGenPin" class="btn btn-secondary btn-sm"
+                      title="Generate 6-digit numeric PIN" style="white-space: nowrap;">
+                      🔢 6-Digit PIN
+                    </button>
+                  </div>
+                </div>
+                <span class="form-text-muted">Parties only have read-only access to view their transactions.</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary">Update Party</button>
+          </div>
+        </form>
+
+        <script>
+          // Strong password generator helper
+          function generateSecurePassword(length = 10) {
+            const uppers = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+            const lowers = 'abcdefghijkmnopqrstuvwxyz';
+            const digits = '23456789';
+            const specials = '@#$%&*';
+            let pwd = '';
+            pwd += uppers[Math.floor(Math.random() * uppers.length)];
+            pwd += lowers[Math.floor(Math.random() * lowers.length)];
+            pwd += digits[Math.floor(Math.random() * digits.length)];
+            pwd += specials[Math.floor(Math.random() * specials.length)];
+            const all = uppers + lowers + digits + specials;
+            for (let i = pwd.length; i < length; i++) {
+              pwd += all[Math.floor(Math.random() * all.length)];
+            }
+            return pwd.split('').sort(() => 0.5 - Math.random()).join('');
+          }
+
+          function generateNumericPin() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+          }
+
+          const portalToggle = document.getElementById('portal_access_enabled');
+          const portalPasswordGroup = document.getElementById('portalPasswordGroup');
+          const partyPasswordInput = document.getElementById('party_password');
+          const partyMobileInput = document.getElementById('mobile_no');
+          const btnGenStrongPassword = document.getElementById('btnGenStrongPassword');
+          const btnGenPin = document.getElementById('btnGenPin');
+          const togglePartyPassword = document.getElementById('togglePartyPassword');
+          const eyeIconOpen = document.getElementById('eyeIconOpen');
+          const eyeIconClosed = document.getElementById('eyeIconClosed');
+
+          // Reveal / Hide Saved Password
+          const btnRevealCurrentPass = document.getElementById('btnRevealCurrentPass');
+          const currentPasswordMasked = document.getElementById('currentPasswordMasked');
+          const currentPasswordPlain = document.getElementById('currentPasswordPlain');
+          const revealBtnText = document.getElementById('revealBtnText');
+          const btnCopyCurrentPass = document.getElementById('btnCopyCurrentPass');
+          const copyBtnText = document.getElementById('copyBtnText');
+
+          if (btnRevealCurrentPass && currentPasswordMasked && currentPasswordPlain) {
+            btnRevealCurrentPass.addEventListener('click', function () {
+              const isHidden = currentPasswordPlain.style.display === 'none';
+              currentPasswordPlain.style.display = isHidden ? 'inline' : 'none';
+              currentPasswordMasked.style.display = isHidden ? 'none' : 'inline';
+              revealBtnText.textContent = isHidden ? 'Hide Password' : 'Show Password';
+            });
+          }
+
+          if (btnCopyCurrentPass) {
+            btnCopyCurrentPass.addEventListener('click', function () {
+              const pwd = this.getAttribute('data-clipboard');
+              if (pwd && navigator.clipboard) {
+                navigator.clipboard.writeText(pwd).then(() => {
+                  copyBtnText.textContent = 'Copied!';
+                  setTimeout(() => { copyBtnText.textContent = 'Copy'; }, 2000);
+                });
+              }
+            });
+          }
+
+          if (portalToggle && portalPasswordGroup) {
+            portalToggle.addEventListener('change', function () {
+              if (this.checked) {
+                portalPasswordGroup.style.display = 'block';
+                partyMobileInput.setAttribute('required', 'required');
+                <% if (!party.password_hash) { %>
+                  if (!partyPasswordInput.value) {
+                    partyPasswordInput.value = generateSecurePassword(10);
+                  }
+                <% } %>
+              } else {
+                portalPasswordGroup.style.display = 'none';
+                partyMobileInput.removeAttribute('required');
+              }
+            });
+          }
+
+          if (btnGenStrongPassword && partyPasswordInput) {
+            btnGenStrongPassword.addEventListener('click', function () {
+              partyPasswordInput.type = 'text';
+              if (eyeIconOpen && eyeIconClosed) {
+                eyeIconOpen.style.display = 'block';
+                eyeIconClosed.style.display = 'none';
+              }
+              partyPasswordInput.value = generateSecurePassword(10);
+            });
+          }
+
+          if (btnGenPin && partyPasswordInput) {
+            btnGenPin.addEventListener('click', function () {
+              partyPasswordInput.type = 'text';
+              if (eyeIconOpen && eyeIconClosed) {
+                eyeIconOpen.style.display = 'block';
+                eyeIconClosed.style.display = 'none';
+              }
+              partyPasswordInput.value = generateNumericPin();
+            });
+          }
+
+          if (togglePartyPassword && partyPasswordInput) {
+            togglePartyPassword.addEventListener('click', function () {
+              const isText = partyPasswordInput.type === 'text';
+              partyPasswordInput.type = isText ? 'password' : 'text';
+              if (eyeIconOpen && eyeIconClosed) {
+                eyeIconOpen.style.display = isText ? 'none' : 'block';
+                eyeIconClosed.style.display = isText ? 'block' : 'none';
+              }
+            });
+          }
+        </script>
+
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+          <h3 style="font-size: 0.95rem; color: #EF4444; margin-bottom: 0.5rem;">Danger Zone</h3>
+          <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Deleting this party will permanently delete all associated credit and debit transactions from your ledger.
+          </p>
+          <form action="/parties/<%= party.id %>/delete" method="POST"
+            data-confirm="Are you sure you want to permanently delete this party and all ledger transactions?">
+            <button type="submit" class="btn btn-danger btn-sm">Delete Party Permanently</button>
+          </form>
+        </div>
+      </div>
     </div>
 
-    <form action="/parties/<%= party.id %>/edit" method="POST">
-      <div class="form-group">
-        <label for="name" class="form-label required">Party Name</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name" 
-          class="form-control" 
-          value="<%= party.name %>" 
-          required 
-          autofocus
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="mobile_no" class="form-label">Mobile Number</label>
-        <input 
-          type="tel" 
-          id="mobile_no" 
-          name="mobile_no" 
-          class="form-control" 
-          value="<%= party.mobile_no || '' %>" 
-          pattern="[6-9][0-9]{9}"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="notes" class="form-label">Notes</label>
-        <textarea 
-          id="notes" 
-          name="notes" 
-          class="form-control" 
-          rows="4"
-        ><%= party.notes || '' %></textarea>
-      </div>
-
-      <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-        <button type="submit" class="btn btn-primary">Update Party</button>
-      </div>
-    </form>
-
-    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-      <h3 style="font-size: 0.95rem; color: #EF4444; margin-bottom: 0.5rem;">Danger Zone</h3>
-      <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Deleting this party will permanently delete all associated credit and debit transactions from your ledger.
-      </p>
-      <form action="/parties/<%= party.id %>/delete" method="POST" data-confirm="Are you sure you want to permanently delete this party and all ledger transactions?">
-        <button type="submit" class="btn btn-danger btn-sm">Delete Party Permanently</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<%- include('../../layouts/footer') %>
+    <%- include('../../layouts/footer') %>

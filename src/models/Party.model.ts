@@ -5,10 +5,13 @@ import {
   InferCreationAttributes,
   CreationOptional,
   ForeignKey,
-  NonAttribute
+  NonAttribute,
+  Op
 } from 'sequelize';
+import bcrypt from 'bcryptjs';
 import { sequelize } from '../config/database';
 import { User } from './User.model';
+import { encryptText, decryptText } from '../utils/crypto.util';
 
 export class Party extends Model<InferAttributes<Party>, InferCreationAttributes<Party>> {
   declare id: CreationOptional<string>;
@@ -17,11 +20,30 @@ export class Party extends Model<InferAttributes<Party>, InferCreationAttributes
   declare mobile_no: CreationOptional<string | null>;
   declare notes: CreationOptional<string | null>;
   declare current_balance: CreationOptional<number>;
+  declare password_hash: CreationOptional<string | null>;
+  declare portal_password: CreationOptional<string | null>;
+  declare portal_access_enabled: CreationOptional<boolean>;
   declare created_at?: CreationOptional<Date>;
   declare updated_at?: CreationOptional<Date>;
 
   // Optional loaded association
   declare user?: NonAttribute<User>;
+
+  /**
+   * Verify plain text password against party password_hash
+   */
+  public async verifyPassword(plainText: string): Promise<boolean> {
+    if (!this.password_hash) return false;
+    return bcrypt.compare(plainText, this.password_hash);
+  }
+
+  /**
+   * Hash password before saving
+   */
+  public static async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+  }
 }
 
 Party.init(
@@ -61,6 +83,31 @@ Party.init(
         return val === null ? 0 : typeof val === 'number' ? val : parseFloat(String(val));
       }
     },
+    password_hash: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    portal_password: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      get() {
+        const raw = this.getDataValue('portal_password');
+        return decryptText(raw);
+      },
+      set(val: string | null | undefined) {
+        if (!val) {
+          this.setDataValue('portal_password', null);
+        } else {
+          const toStore = val.startsWith('enc:') ? val : encryptText(val);
+          this.setDataValue('portal_password', toStore);
+        }
+      }
+    },
+    portal_access_enabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
@@ -79,6 +126,16 @@ Party.init(
       },
       {
         fields: ['user_id', 'name']
+      },
+      {
+        name: 'parties_user_id_mobile_no_unique',
+        unique: true,
+        fields: ['user_id', 'mobile_no'],
+        where: {
+          mobile_no: {
+            [Op.ne]: null
+          }
+        }
       }
     ]
   }

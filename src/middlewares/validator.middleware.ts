@@ -85,7 +85,13 @@ export class ValidationRules {
         .trim()
         .isLength({ max: 1000 })
         .withMessage('Notes cannot exceed 1000 characters')
-        .escape()
+        .escape(),
+
+      body('password')
+        .optional({ checkFalsy: true })
+        .trim()
+        .isLength({ min: 4, max: 50 })
+        .withMessage('Portal password must be at least 4 characters long')
     ];
   }
 

@@ -616,8 +616,9 @@
   background-color: #fee2e2;
 }
 
-/* Ensure the page footer is completely visible and scrollable above the fixed dock */
-.app-footer {
+/* Ensure the page footer is completely visible and scrollable above the fixed dock ONLY when the dock exists */
+body:has(.ledger-bottom-dock) .app-footer,
+.has-ledger-dock .app-footer {
   padding-bottom: calc(6.5rem + env(safe-area-inset-bottom)) !important;
 }
 
@@ -712,9 +713,21 @@
 
   .party-actions-group {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0.5rem;
     width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    .party-actions-group {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .portal-credentials-card {
+    width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
   }
 
   .party-actions-group .btn,

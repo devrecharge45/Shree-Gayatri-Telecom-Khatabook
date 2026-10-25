@@ -1,0 +1,110 @@
+<%- include('../../layouts/header') %>
+
+  <div class="auth-wrapper">
+    <div class="auth-card" style="box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem;">
+      <div class="auth-header">
+        <img src="/images/logo.png" alt="Logo" class="auth-logo" onerror="this.src='/icons/icon-128x128.png'">
+        <div style="display: inline-block; margin-bottom: 0.4rem;">
+          <span class="badge badge-credit" style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 0.2rem 0.5rem; text-transform: uppercase;">Customer Passbook</span>
+        </div>
+        <h1 class="auth-title" style="font-size: 1.5rem; margin-bottom: 0.35rem;">Digital Passbook Login</h1>
+        <p class="auth-subtitle" style="font-size: 0.875rem;">View verified real-time statement for <strong><%= company.name %></strong></p>
+      </div>
+
+      <!-- Direct App Install Card -->
+      <div id="pwaDirectInstallBox"
+        style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: #ffffff; border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <img src="/icons/icon-72x72.png" alt="App Icon"
+            style="width: 40px; height: 40px; border-radius: 10px; background: white; padding: 2px;"
+            onerror="this.src='/images/logo.png'">
+          <div>
+            <div style="font-weight: 700; font-size: 0.92rem; line-height: 1.2; color: #ffffff;">Install Passbook App</div>
+            <div style="font-size: 0.76rem; opacity: 0.92; margin-top: 2px; color: #f1f5f9;">Add to phone home screen</div>
+          </div>
+        </div>
+        <button type="button" id="btnInstallAppPortal"
+          style="background: #ffffff; color: #1E3A8A; font-weight: 700; font-size: 0.825rem; padding: 0.45rem 0.85rem; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+          📲 Install App
+        </button>
+      </div>
+
+      <div id="iosInstallHint"
+        style="display: none; background: rgba(37, 99, 235, 0.08); border: 1px dashed rgba(37, 99, 235, 0.35); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-main);">
+        📱 <strong>iPhone user?</strong> Tap the <strong>Share</strong> icon (⎋) at the bottom of Safari and select <strong>"Add to Home Screen"</strong> (➕) to install.
+      </div>
+
+      <form action="/portal/login" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="mobile_no" class="form-label required">Registered Mobile Number</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <span style="position: absolute; left: 12px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); pointer-events: none;">+91</span>
+            <input type="tel" id="mobile_no" name="mobile_no" class="form-control" placeholder="98765 43210"
+              value="<%= typeof oldInput !== 'undefined' && oldInput.mobile_no ? oldInput.mobile_no : '' %>"
+              pattern="[6-9][0-9]{9}" maxlength="10" required autofocus
+              style="padding-left: 2.75rem; letter-spacing: 0.5px; font-weight: 600;">
+          </div>
+          <span class="form-text-muted">Enter the 10-digit mobile number registered with <%= company.name %>.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="portal_password" class="form-label required">Passbook Password / PIN</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="password" id="portal_password" name="password" class="form-control" placeholder="Enter password or PIN" required
+              style="padding-right: 2.75rem; font-family: monospace; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;">
+            <button type="button" id="btnTogglePortalPass" title="Show / Hide Password"
+              style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 6px; display: flex; align-items: center;">
+              <svg id="portalEyeOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg id="portalEyeClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          <span class="form-text-muted">Use the password / PIN provided by the shopkeeper.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block"
+          style="margin-top: 0.5rem; padding: 0.85rem; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <span>Access My Passbook</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <div class="auth-footer" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem;">
+        <div
+          style="background: rgba(100, 116, 139, 0.08); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.825rem; color: var(--text-muted); text-align: left;">
+          🔒 Your customer portal has <strong>read-only access</strong>. Only verified transactions recorded by the store are shown.
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Are you the shop owner? <a href="/login" class="auth-link" style="font-weight: 600;">Admin Login &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const btnTogglePortalPass = document.getElementById('btnTogglePortalPass');
+    const portalPasswordInput = document.getElementById('portal_password');
+    const portalEyeOpen = document.getElementById('portalEyeOpen');
+    const portalEyeClosed = document.getElementById('portalEyeClosed');
+
+    if (btnTogglePortalPass && portalPasswordInput) {
+      btnTogglePortalPass.addEventListener('click', function () {
+        const isPassword = portalPasswordInput.type === 'password';
+        portalPasswordInput.type = isPassword ? 'text' : 'password';
+        if (portalEyeOpen && portalEyeClosed) {
+          portalEyeOpen.style.display = isPassword ? 'none' : 'block';
+          portalEyeClosed.style.display = isPassword ? 'block' : 'none';
+        }
+      });
+    }
+  </script>
+
+  <%- include('../../layouts/footer') %>

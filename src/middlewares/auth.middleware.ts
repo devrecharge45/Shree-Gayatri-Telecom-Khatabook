@@ -77,7 +77,7 @@ export class AuthMiddleware {
   }
 
   /**
-   * For routes like /login and /register - if already logged in, redirect to /parties
+   * For routes like /login and /register - if already logged in, redirect to respective dashboard
    */
   public static guestOnly(req: Request, res: Response, next: NextFunction): void {
     const token = req.cookies?.auth_token;
@@ -90,6 +90,21 @@ export class AuthMiddleware {
         // Token invalid/expired, allow guest access
       }
     }
+
+    // If customer is already logged in, redirect to customer passbook
+    const partyToken = req.cookies?.party_auth_token;
+    if (partyToken) {
+      try {
+        const decoded = jwt.verify(partyToken, env.security.jwtSecret) as { role: string };
+        if (decoded.role === 'party') {
+          res.redirect('/portal/passbook');
+          return;
+        }
+      } catch {
+        // Token invalid/expired
+      }
+    }
+
     next();
   }
 }
