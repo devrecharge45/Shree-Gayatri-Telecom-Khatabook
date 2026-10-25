@@ -6,6 +6,7 @@ import transactionRoutes from './transaction.routes';
 import reportRoutes from './report.routes';
 import profileRoutes from './profile.routes';
 import manifestRoutes from './manifest.routes';
+import portalRoutes from './portal.routes';
 
 const router = Router();
 
@@ -15,9 +16,20 @@ router.use('/', healthRoutes);
 // Dynamic PWA manifest
 router.use('/', manifestRoutes);
 
-// Root path redirects to /parties
+// Customer Passbook Portal Routes (/portal/login, /portal/passbook, etc.)
+router.use('/portal', portalRoutes);
+
+// Smart root path redirect based on user or customer session
 router.get('/', (req, res) => {
-  res.redirect('/parties');
+  if (req.cookies?.party_auth_token) {
+    res.redirect('/portal/passbook');
+    return;
+  }
+  if (req.cookies?.auth_token) {
+    res.redirect('/parties');
+    return;
+  }
+  res.redirect('/portal/login');
 });
 
 // Authentication Routes (/login, /register, /logout)

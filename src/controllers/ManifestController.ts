@@ -8,7 +8,7 @@ export class ManifestController {
       name: env.server.appName,
       short_name: env.server.appShortName,
       description: `Smart digital ledger for ${env.company.name}`,
-      start_url: '/parties',
+      start_url: '/?source=pwa',
       display: 'standalone',
       background_color: '#0F172A',
       theme_color: '#1E293B',

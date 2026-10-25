@@ -56,10 +56,18 @@ export class TransactionService {
 
     runningBalance = Math.round(runningBalance * 100) / 100;
 
-    await Party.update(
-      { current_balance: runningBalance },
-      { where: { id: partyId, user_id: userId }, transaction: t }
-    );
+    const party = await Party.findOne({
+      where: { id: partyId, user_id: userId },
+      attributes: ['id', 'current_balance'],
+      transaction: t
+    });
+
+    if (party && Math.abs(Number(party.current_balance) - runningBalance) > 0.0001) {
+      await Party.update(
+        { current_balance: runningBalance },
+        { where: { id: partyId, user_id: userId }, transaction: t, silent: true }
+      );
+    }
 
     return runningBalance;
   }
@@ -169,6 +177,10 @@ export class TransactionService {
       );
 
       await TransactionService.recalculatePartyBalances(party.id, data.userId, t);
+      await Party.update(
+        { updated_at: new Date() },
+        { where: { id: party.id, user_id: data.userId }, transaction: t }
+      );
 
       await t.commit();
       await transaction.reload();
@@ -200,6 +212,10 @@ export class TransactionService {
       await transaction.destroy({ transaction: t });
 
       await TransactionService.recalculatePartyBalances(partyId, userId, t);
+      await Party.update(
+        { updated_at: new Date() },
+        { where: { id: partyId, user_id: userId }, transaction: t }
+      );
 
       await t.commit();
     } catch (err) {
@@ -242,6 +258,10 @@ export class TransactionService {
       await transaction.save({ transaction: t });
 
       await TransactionService.recalculatePartyBalances(data.partyId, data.userId, t);
+      await Party.update(
+        { updated_at: new Date() },
+        { where: { id: data.partyId, user_id: data.userId }, transaction: t }
+      );
 
       await t.commit();
       await transaction.reload();

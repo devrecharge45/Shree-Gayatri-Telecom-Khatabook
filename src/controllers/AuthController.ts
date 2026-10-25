@@ -5,11 +5,19 @@ import { env } from '../config/environment';
 export class AuthController {
   public static showLogin(req: Request, res: Response): void {
     res.render('pages/auth/login', {
-      title: `Login - ${env.server.appShortName}`
+      title: `Login - ${env.server.appShortName}`,
+      allowRegistration: env.security.allowPublicRegistration
     });
   }
 
   public static showRegister(req: Request, res: Response): void {
+    if (!env.security.allowPublicRegistration) {
+      if (req.flash)
+        req.flash('errors', ['Public account registration is disabled by administrator.']);
+      res.redirect('/login');
+      return;
+    }
+
     res.render('pages/auth/register', {
       title: `Create Account - ${env.server.appShortName}`
     });
@@ -41,6 +49,12 @@ export class AuthController {
 
   public static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      if (!env.security.allowPublicRegistration) {
+        if (req.flash) req.flash('errors', ['Public registration is disabled.']);
+        res.redirect('/login');
+        return;
+      }
+
       const { name, email, password } = req.body;
       const { token } = await AuthService.register(name, email, password);
 

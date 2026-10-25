@@ -41,9 +41,15 @@ export class PartyController {
   public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const { name, mobile_no, notes } = req.body;
+      const { name, mobile_no, notes, portal_access_enabled, password } = req.body;
 
-      const party = await PartyService.createParty(userId, { name, mobile_no, notes });
+      const party = await PartyService.createParty(userId, {
+        name,
+        mobile_no,
+        notes,
+        portal_access_enabled,
+        password
+      });
 
       if (req.xhr || req.headers.accept?.includes('application/json')) {
         res.status(201).json({ success: true, message: 'Party created successfully', party });
@@ -82,9 +88,15 @@ export class PartyController {
     try {
       const userId = req.user!.id;
       const partyId = req.params.id as string;
-      const { name, mobile_no, notes } = req.body;
+      const { name, mobile_no, notes, portal_access_enabled, password } = req.body;
 
-      const party = await PartyService.updateParty(partyId, userId, { name, mobile_no, notes });
+      const party = await PartyService.updateParty(partyId, userId, {
+        name,
+        mobile_no,
+        notes,
+        portal_access_enabled,
+        password
+      });
 
       if (req.flash) req.flash('success', [`Party "${party.name}" updated successfully.`]);
       res.redirect(`/parties/${party.id}/ledger`);

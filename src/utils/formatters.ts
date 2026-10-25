@@ -1,13 +1,19 @@
 export class Formatters {
   /**
    * Formats currency as Indian Rupee (₹)
+   * Omits trailing .00 for integer amounts to optimize readability on mobile screens,
+   * while preserving exact decimals if paise exists (e.g. ₹3,899.50) or if forceDecimals is true.
    */
-  public static currency(amount: number | string | null | undefined): string {
+  public static currency(
+    amount: number | string | null | undefined,
+    forceDecimals: boolean = false
+  ): string {
     const num = Number(amount) || 0;
+    const hasDecimals = num % 1 !== 0;
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      minimumFractionDigits: 2,
+      minimumFractionDigits: hasDecimals || forceDecimals ? 2 : 0,
       maximumFractionDigits: 2
     }).format(num);
   }
@@ -15,9 +21,12 @@ export class Formatters {
   /**
    * Formats absolute number for display with ₹
    */
-  public static absoluteCurrency(amount: number | string | null | undefined): string {
+  public static absoluteCurrency(
+    amount: number | string | null | undefined,
+    forceDecimals: boolean = false
+  ): string {
     const num = Math.abs(Number(amount) || 0);
-    return Formatters.currency(num);
+    return Formatters.currency(num, forceDecimals);
   }
 
   /**

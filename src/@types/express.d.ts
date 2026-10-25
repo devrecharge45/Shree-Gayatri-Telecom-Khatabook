@@ -1,15 +1,18 @@
 import { User } from '../models/User.model';
+import { Party } from '../models/Party.model';
 import { ServerConfig, CompanyConfig } from '../config/environment';
 
 declare global {
   namespace Express {
     interface Request {
       user?: User;
+      party?: Party;
       flash(type: string, message?: string | string[]): string[];
     }
     interface Response {
       locals: {
         currentUser?: User;
+        currentParty?: Party;
         app?: ServerConfig;
         company?: CompanyConfig;
         currentYear?: number;

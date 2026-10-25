@@ -228,12 +228,22 @@
   height: 22px;
 }
 
+.mobile-only {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
   .app-container {
     padding-bottom: 1.5rem !important;
   }
   .nav-links.desktop-only {
-    display: none;
+    display: none !important;
   }
   .bottom-nav {
     display: block;

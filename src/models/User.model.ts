@@ -15,6 +15,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare password_hash: string;
   declare created_at?: CreationOptional<Date>;
   declare updated_at?: CreationOptional<Date>;
+  declare deleted_at?: CreationOptional<Date | null>;
 
   /**
    * Verify plain text password against bcrypt hash
@@ -62,11 +63,17 @@ User.init(
     updated_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   },
   {
     sequelize,
     tableName: 'users',
+    paranoid: true,
+    deletedAt: 'deleted_at',
     indexes: [
       {
         unique: true,

@@ -3,54 +3,60 @@
   <!-- Top Summary Cards -->
   <section class="dashboard-grid">
     <!-- Net Balance -->
-    <div class="stat-card stat-net">
-      <span class="stat-label">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <line x1="6" y1="4" x2="18" y2="4"></line>
-          <line x1="6" y1="9" x2="18" y2="9"></line>
-          <path d="M6 4h6a4 4 0 0 1 4 4c0 2.2-1.8 4-4 4H6"></path>
-          <line x1="10" y1="13" x2="16" y2="20"></line>
-        </svg>
-        Net Balance
-      </span>
+    <div class="stat-card stat-net" title="Net Balance: <%= formatters.currency(stats.netBalance, true) %>">
+      <div class="stat-meta">
+        <span class="stat-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="6" y1="4" x2="18" y2="4"></line>
+            <line x1="6" y1="9" x2="18" y2="9"></line>
+            <path d="M6 4h6a4 4 0 0 1 4 4c0 2.2-1.8 4-4 4H6"></path>
+            <line x1="10" y1="13" x2="16" y2="20"></line>
+          </svg>
+          Net Balance
+        </span>
+        <span class="stat-subtext">Overall business ledger standing</span>
+      </div>
       <span class="stat-value"
         style="color: <%= stats.netBalance >= 0 ? 'var(--color-credit)' : 'var(--color-debit)' %>">
         <%= formatters.currency(stats.netBalance) %>
       </span>
-      <span class="stat-subtext">Overall business ledger standing</span>
     </div>
 
     <!-- Total You Will Get -->
-    <div class="stat-card stat-receive">
-      <span class="stat-label" style="color: var(--color-credit);">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-          <polyline points="5 12 12 5 19 12"></polyline>
-        </svg>
-        You Will Get
-      </span>
+    <div class="stat-card stat-receive" title="Total You Will Get: <%= formatters.currency(stats.totalToReceive, true) %>">
+      <div class="stat-meta">
+        <span class="stat-label" style="color: var(--color-credit);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+          You Will Get
+        </span>
+        <span class="stat-subtext">Receivables from <%= stats.totalParties %> parties</span>
+      </div>
       <span class="stat-value" style="color: var(--color-credit);">
         <%= formatters.currency(stats.totalToReceive) %>
       </span>
-      <span class="stat-subtext">Receivables from <%= stats.totalParties %> parties</span>
     </div>
 
     <!-- Total You Will Give -->
-    <div class="stat-card stat-give">
-      <span class="stat-label" style="color: var(--color-debit);">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <polyline points="19 12 12 19 5 12"></polyline>
-        </svg>
-        You Will Give
-      </span>
+    <div class="stat-card stat-give" title="Total You Will Give: <%= formatters.currency(stats.totalToGive, true) %>">
+      <div class="stat-meta">
+        <span class="stat-label" style="color: var(--color-debit);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+          You Will Give
+        </span>
+        <span class="stat-subtext">Payables / Advances</span>
+      </div>
       <span class="stat-value" style="color: var(--color-debit);">
         <%= formatters.currency(stats.totalToGive) %>
       </span>
-      <span class="stat-subtext">Payables / Advances</span>
     </div>
   </section>
 
@@ -146,22 +152,22 @@
                       <%= formatters.currency(bal) %>
                     </span>
                     <span class="party-balance-status" style="color: var(--color-credit);">You will get</span>
-                  <% } else if (bal < 0) { %>
-                    <span class="party-balance-amount" style="color: var(--color-debit);">
-                      <%= formatters.currency(Math.abs(bal)) %>
-                    </span>
-                    <span class="party-balance-status" style="color: var(--color-debit);">You will give</span>
-                  <% } else { %>
-                    <span class="party-balance-amount" style="color: var(--text-muted);">
-                      ₹0.00
-                    </span>
-                    <span class="party-balance-status" style="color: var(--text-muted);">Settled</span>
-                  <% } %>
+                    <% } else if (bal < 0) { %>
+                      <span class="party-balance-amount" style="color: var(--color-debit);">
+                        <%= formatters.currency(Math.abs(bal)) %>
+                      </span>
+                      <span class="party-balance-status" style="color: var(--color-debit);">You will give</span>
+                      <% } else { %>
+                        <span class="party-balance-amount" style="color: var(--text-muted);">
+                          ₹0.00
+                        </span>
+                        <span class="party-balance-status" style="color: var(--text-muted);">Settled</span>
+                        <% } %>
                 </div>
 
                 <span class="party-chevron" aria-hidden="true">&rsaquo;</span>
               </div>
-            </a>            <!-- Quick Action Shortcuts (Call & WhatsApp when phone exists, Edit always visible) -->
+            </a> <!-- Quick Action Shortcuts (Call & WhatsApp when phone exists, Edit always visible) -->
             <div class="party-quick-bar">
               <% if (party.mobile_no) { %>
                 <a href="tel:<%= party.mobile_no %>" class="btn-quick-touch btn-touch-call"
@@ -182,16 +188,16 @@
                   </svg>
                   <span>WhatsApp</span>
                 </a>
-              <% } %>
-              <a href="/parties/<%= party.id %>/edit" class="btn-quick-touch btn-touch-edit"
-                title="Edit <%= party.name %>">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-                <span>Edit</span>
-              </a>
+                <% } %>
+                  <a href="/parties/<%= party.id %>/edit" class="btn-quick-touch btn-touch-edit"
+                    title="Edit <%= party.name %>">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>Edit</span>
+                  </a>
             </div>
           </div>
           <% }); %>
@@ -246,8 +252,8 @@
 
                     <% } else { %>
                       <div class="empty-state">
-                        <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                          stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                           <circle cx="9" cy="7" r="4"></circle>
                           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -296,6 +302,57 @@
               placeholder="e.g. Wholesaler for mobile accessories, credit limit ₹50,000"></textarea>
             <span class="form-text-muted">Optional: Any special conditions or reference</span>
           </div>
+
+          <!-- Customer Portal / Passbook Login Section -->
+          <div
+            style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label for="portal_access_enabled"
+                style="font-weight: 600; font-size: 0.9rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="portal_access_enabled" name="portal_access_enabled" value="true"
+                  style="width: 17px; height: 17px; accent-color: var(--primary-color);">
+                Enable Customer Passbook Login
+              </label>
+              <span class="badge badge-credit" style="font-size: 0.72rem;">Read-Only</span>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+              Allows this customer to log into their digital passbook using their 10-digit mobile number and password.
+            </p>
+
+            <div id="portalPasswordGroup" style="display: none;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="party_password" class="form-label required">Set Customer Password / PIN</label>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <div style="position: relative; flex: 1; min-width: 180px;">
+                    <input type="text" id="party_password" name="password" class="form-control"
+                      placeholder="e.g. Khat@8492 or 6-digit PIN" autocomplete="off" style="padding-right: 2.5rem; font-family: monospace; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;">
+                    <button type="button" id="togglePartyPassword" title="Show / Hide Password"
+                      style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center;">
+                      <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <svg id="eyeIconClosed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <div style="display: inline-flex; gap: 0.35rem;">
+                    <button type="button" id="btnGenStrongPassword" class="btn btn-secondary btn-sm"
+                      title="Generate high security password (letters + numbers + symbols)" style="white-space: nowrap; font-weight: 600;">
+                      🔒 Strong Password
+                    </button>
+                    <button type="button" id="btnGenPin" class="btn btn-secondary btn-sm"
+                      title="Generate 6-digit numeric PIN" style="white-space: nowrap;">
+                      🔢 6-Digit PIN
+                    </button>
+                  </div>
+                </div>
+                <span class="form-text-muted">Admin can view, copy and share this password directly with the customer anytime.</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="modal-footer">
@@ -305,5 +362,88 @@
       </form>
     </div>
   </div>
+
+  <script>
+    // Strong password generator helper
+    function generateSecurePassword(length = 10) {
+      const uppers = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+      const lowers = 'abcdefghijkmnopqrstuvwxyz';
+      const digits = '23456789';
+      const specials = '@#$%&*';
+      let pwd = '';
+      pwd += uppers[Math.floor(Math.random() * uppers.length)];
+      pwd += lowers[Math.floor(Math.random() * lowers.length)];
+      pwd += digits[Math.floor(Math.random() * digits.length)];
+      pwd += specials[Math.floor(Math.random() * specials.length)];
+      const all = uppers + lowers + digits + specials;
+      for (let i = pwd.length; i < length; i++) {
+        pwd += all[Math.floor(Math.random() * all.length)];
+      }
+      return pwd.split('').sort(() => 0.5 - Math.random()).join('');
+    }
+
+    function generateNumericPin() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    // Toggle Customer Portal Password Group in Add Party Modal
+    const portalToggle = document.getElementById('portal_access_enabled');
+    const portalPasswordGroup = document.getElementById('portalPasswordGroup');
+    const partyPasswordInput = document.getElementById('party_password');
+    const partyMobileInput = document.getElementById('party_mobile');
+    const btnGenStrongPassword = document.getElementById('btnGenStrongPassword');
+    const btnGenPin = document.getElementById('btnGenPin');
+    const togglePartyPassword = document.getElementById('togglePartyPassword');
+    const eyeIconOpen = document.getElementById('eyeIconOpen');
+    const eyeIconClosed = document.getElementById('eyeIconClosed');
+
+    if (portalToggle && portalPasswordGroup) {
+      portalToggle.addEventListener('change', function () {
+        if (this.checked) {
+          portalPasswordGroup.style.display = 'block';
+          partyMobileInput.setAttribute('required', 'required');
+          if (!partyPasswordInput.value) {
+            partyPasswordInput.value = generateSecurePassword(10);
+          }
+        } else {
+          portalPasswordGroup.style.display = 'none';
+          partyMobileInput.removeAttribute('required');
+        }
+      });
+    }
+
+    if (btnGenStrongPassword && partyPasswordInput) {
+      btnGenStrongPassword.addEventListener('click', function () {
+        partyPasswordInput.type = 'text';
+        if (eyeIconOpen && eyeIconClosed) {
+          eyeIconOpen.style.display = 'block';
+          eyeIconClosed.style.display = 'none';
+        }
+        partyPasswordInput.value = generateSecurePassword(10);
+      });
+    }
+
+    if (btnGenPin && partyPasswordInput) {
+      btnGenPin.addEventListener('click', function () {
+        partyPasswordInput.type = 'text';
+        if (eyeIconOpen && eyeIconClosed) {
+          eyeIconOpen.style.display = 'block';
+          eyeIconClosed.style.display = 'none';
+        }
+        partyPasswordInput.value = generateNumericPin();
+      });
+    }
+
+    if (togglePartyPassword && partyPasswordInput) {
+      togglePartyPassword.addEventListener('click', function () {
+        const isText = partyPasswordInput.type === 'text';
+        partyPasswordInput.type = isText ? 'password' : 'text';
+        if (eyeIconOpen && eyeIconClosed) {
+          eyeIconOpen.style.display = isText ? 'none' : 'block';
+          eyeIconClosed.style.display = isText ? 'block' : 'none';
+        }
+      });
+    }
+  </script>
 
   <%- include('../../layouts/footer') %>

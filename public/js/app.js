@@ -132,6 +132,18 @@
     }
   });
 
+  // Auto-submit filter forms on page limit dropdown change
+  document.addEventListener('change', (e) => {
+    if (
+      e.target &&
+      (e.target.id === 'ledgerLimitSelect' || e.target.id === 'passbookLimitSelect')
+    ) {
+      if (e.target.form) {
+        e.target.form.submit();
+      }
+    }
+  });
+
   // Close modals & dropdowns with Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {

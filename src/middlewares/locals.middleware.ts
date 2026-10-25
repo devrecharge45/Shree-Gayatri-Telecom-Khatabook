@@ -9,6 +9,8 @@ export class LocalsMiddleware {
     res.locals.currentYear = new Date().getFullYear();
     res.locals.currentPath = req.path;
     res.locals.formatters = Formatters;
+    res.locals.currentUser = null;
+    res.locals.currentParty = null;
 
     // Flash messages support with safe fallbacks
     try {

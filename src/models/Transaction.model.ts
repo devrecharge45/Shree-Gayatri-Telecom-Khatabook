@@ -27,6 +27,7 @@ export class Transaction extends Model<
   declare balance_after: number;
   declare created_at?: CreationOptional<Date>;
   declare updated_at?: CreationOptional<Date>;
+  declare deleted_at?: CreationOptional<Date | null>;
 
   // Optional associations
   declare party?: NonAttribute<Party>;
@@ -97,11 +98,17 @@ Transaction.init(
     updated_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   },
   {
     sequelize,
     tableName: 'transactions',
+    paranoid: true,
+    deletedAt: 'deleted_at',
     indexes: [
       {
         fields: ['party_id']
@@ -111,6 +118,9 @@ Transaction.init(
       },
       {
         fields: ['transaction_date']
+      },
+      {
+        fields: ['deleted_at']
       }
     ]
   }
