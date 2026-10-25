@@ -114,6 +114,7 @@ export class App {
         Logger.info(`=======================================================`);
         Logger.info(`  ${env.server.appName} is running!`);
         Logger.info(`  Environment : ${env.server.nodeEnv}`);
+        Logger.info(`  Node Version: ${process.version}`);
         Logger.info(`  Local URL   : http://localhost:${port}`);
         Logger.info(`  External URL: http://[IP_ADDRESS]:${port}`);
         Logger.info(`  Company     : ${env.company.name}`);
