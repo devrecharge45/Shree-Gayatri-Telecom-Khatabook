@@ -3,7 +3,7 @@
   <%- include('../../layouts/breadcrumbs', { breadcrumbs: [ { label: 'Parties' , url: '/parties' }, { label: party.name,
     url: '/parties/' + party.id + '/ledger' }, { label: 'Edit Party' } ] }) %>
 
-    <div style="max-width: 600px; margin: 0 auto;">
+    <div style="max-width: 600px; margin: 0 auto 3.5rem auto;">
       <div class="card">
         <div class="card-header">
           <h1 class="card-title">Edit Party Details</h1>
@@ -29,23 +29,23 @@
 
           <!-- Customer Portal / Passbook Login Management -->
           <div
-            style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px; padding: 1.25rem; margin-top: 1rem;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            style="background: rgba(37, 99, 235, 0.04); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
               <label for="portal_access_enabled"
-                style="font-weight: 600; font-size: 0.95rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                style="font-weight: 600; font-size: 0.92rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 180px;">
                 <input type="checkbox" id="portal_access_enabled" name="portal_access_enabled" value="true"
                   <%=party.portal_access_enabled ? 'checked' : '' %>
-                style="width: 18px; height: 18px; accent-color: var(--primary-color);"
+                style="width: 18px; height: 18px; accent-color: var(--primary-color); flex-shrink: 0;"
                 >
-                Enable Customer Passbook Login
+                <span>Enable Customer Passbook Login</span>
               </label>
               <% if (party.portal_access_enabled) { %>
-                <span class="badge badge-credit" style="font-size: 0.75rem;">Portal Active</span>
+                <span class="badge badge-credit" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; white-space: nowrap; align-self: center;">Portal Active</span>
                 <% } else { %>
-                  <span class="badge badge-settled" style="font-size: 0.75rem;">Inactive</span>
+                  <span class="badge badge-settled" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; white-space: nowrap; align-self: center;">Inactive</span>
                   <% } %>
             </div>
-            <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1rem;">
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.85rem; line-height: 1.4;">
               Allows <%= party.name %> to log in at <code>/portal/login</code> with their mobile number to view their
                 credit/debit passbook.
             </p>
@@ -54,34 +54,36 @@
               <% if (party.portal_password) { %>
                 <!-- Currently Saved Password Display -->
                 <div
-                  style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
-                  <div>
+                  style="background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.6rem; flex-wrap: wrap;">
                     <span
-                      style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); display: block; letter-spacing: 0.5px;">Current
+                      style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); display: block; letter-spacing: 0.5px;">Current
                       Active Password</span>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
                       <span id="currentPasswordMasked"
-                        style="font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--text-main);">••••••••</span>
+                        style="font-family: monospace; font-size: 1.15rem; font-weight: 700; letter-spacing: 2px; color: var(--text-main);">••••••••</span>
                       <span id="currentPasswordPlain"
                         style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--color-primary); display: none;">
                         <%= party.portal_password %>
                       </span>
                     </div>
                   </div>
-                  <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+
+                  <!-- Action Buttons: Responsive Grid that fits seamlessly on small screens -->
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 0.4rem; width: 100%;">
                     <button type="button" id="btnRevealCurrentPass" class="btn btn-secondary btn-sm"
-                      style="display: inline-flex; align-items: center; gap: 0.35rem;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.45rem 0.4rem; font-size: 0.78rem; font-weight: 600; white-space: nowrap;">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                       </svg>
-                      <span id="revealBtnText">Show Password</span>
+                      <span id="revealBtnText">Show</span>
                     </button>
                     <button type="button" id="btnCopyCurrentPass" class="btn btn-secondary btn-sm"
-                      style="display: inline-flex; align-items: center; gap: 0.35rem;"
+                      style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.45rem 0.4rem; font-size: 0.78rem; font-weight: 600; white-space: nowrap;"
                       data-clipboard="<%= party.portal_password %>">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -89,40 +91,39 @@
                       <span id="copyBtnText">Copy</span>
                     </button>
                     <% if (party.mobile_no) { %>
-                      <% const portalLoginUrl=(app && app.appUrl ? app.appUrl : '' ) + '/portal/login?install=1' ; const
-                        actualPass=party.portal_password; const passbookShareLines=[ `Namaste ${party.name} ji, 🙏`, ``,
-                        `📲 *${company.name} - Digital Passbook App*`, `Aapka live credit-debit hisaab check karne ke
-                        liye mobile app install karein:`, ``, `1️⃣ *Direct App Install & Login Link:*`, `👉
-                        ${portalLoginUrl}`, ``, `2️⃣ *Aapke Login Credentials:*`, `📱 *Mobile:* ${party.mobile_no}`, `🔑
-                        *Password:* ${actualPass}`, ``, `💡 *Tip:* Link open karke *"Install App / Add to Home Screen"*
-                        dabayein, app direct aapke phone mein install ho jayegi!` ]; const
-                        passbookShareMsg=encodeURIComponent(passbookShareLines.join('\n')); %>
-                        <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=<%= passbookShareMsg %>"
-                          target="_blank" class="btn btn-secondary btn-sm"
-                          style="display: inline-flex; align-items: center; gap: 0.35rem; color: #059669; border-color: rgba(16, 185, 129, 0.4); font-weight: 600;"
-                          title="Share Mobile App Install Link & Credentials via WhatsApp">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                              d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.983.538 1.83.824 2.791.824 3.182 0 5.768-2.587 5.768-5.767.001-3.18-2.584-5.769-5.768-5.769zm3.385 8.167c-.145.408-.724.747-1.189.847-.32.069-.738.125-2.144-.457-1.798-.744-2.956-2.57-3.045-2.689-.089-.119-.729-.97-.729-1.85 0-.88.461-1.312.625-1.488.164-.176.357-.22.476-.22.12 0 .239.001.343.006.109.006.257-.041.401.306.149.357.509 1.242.553 1.332.045.089.074.194.015.313-.059.119-.089.194-.178.298-.089.104-.188.232-.268.312-.089.089-.182.186-.078.365.104.179.463.764.994 1.237.684.609 1.261.798 1.44.887.179.089.283.075.388-.045.104-.119.447-.521.566-.7.119-.179.239-.149.402-.089.164.06 1.041.491 1.22.58.179.089.298.134.343.209.045.074.045.432-.1 1.044z" />
-                          </svg>
-                          <span>WhatsApp</span>
-                        </a>
-                        <% } %>
+                      <% const passbookShareLink = formatters.passbookWhatsAppShareUrl({
+                        partyName: party.name,
+                        mobileNo: party.mobile_no,
+                        portalPassword: party.portal_password,
+                        companyName: company.name,
+                        appUrl: app ? app.appUrl : ''
+                      }); %>
+                      <a href="<%= passbookShareLink %>"
+                        target="_blank" class="btn btn-secondary btn-sm"
+                        style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.45rem 0.4rem; font-size: 0.78rem; color: #059669; border-color: rgba(16, 185, 129, 0.4); font-weight: 600; white-space: nowrap;"
+                        title="Share Mobile App Install Link & Credentials via WhatsApp">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.983.538 1.83.824 2.791.824 3.182 0 5.768-2.587 5.768-5.767.001-3.18-2.584-5.769-5.768-5.769zm3.385 8.167c-.145.408-.724.747-1.189.847-.32.069-.738.125-2.144-.457-1.798-.744-2.956-2.57-3.045-2.689-.089-.119-.729-.97-.729-1.85 0-.88.461-1.312.625-1.488.164-.176.357-.22.476-.22.12 0 .239.001.343.006.109.006.257-.041.401.306.149.357.509 1.242.553 1.332.045.089.074.194.015.313-.059.119-.089.194-.178.298-.089.104-.188.232-.268.312-.089.089-.182.186-.078.365.104.179.463.764.994 1.237.684.609 1.261.798 1.44.887.179.089.283.075.388-.045.104-.119.447-.521.566-.7.119-.179.239-.149.402-.089.164.06 1.041.491 1.22.58.179.089.298.134.343.209.045.074.045.432-.1 1.044z" />
+                        </svg>
+                        <span>WhatsApp</span>
+                      </a>
+                    <% } %>
                   </div>
                 </div>
                 <% } %>
 
                   <div class="form-group" style="margin-bottom: 0;">
-                    <label for="party_password" class="form-label">
+                    <label for="party_password" class="form-label" style="font-size: 0.85rem;">
                       <%= party.password_hash ? 'Reset / Update Password (Leave empty to keep current)'
                         : 'Set Customer Password / PIN' %>
                     </label>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                      <div style="position: relative; flex: 1; min-width: 180px;">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                      <div style="position: relative; width: 100%;">
                         <input type="text" id="party_password" name="password" class="form-control"
                           placeholder="<%= party.password_hash ? 'Enter new password only if changing' : 'e.g. Khat@8492 or 6-digit PIN' %>"
                           autocomplete="off"
-                          style="padding-right: 2.5rem; font-family: monospace; font-size: 0.95rem; font-weight: 600;">
+                          style="padding-right: 2.5rem; font-family: monospace; font-size: 0.95rem; font-weight: 600; width: 100%;">
                         <button type="button" id="togglePartyPassword" title="Show / Hide Password"
                           style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center;">
                           <svg id="eyeIconOpen" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -140,18 +141,18 @@
                           </svg>
                         </button>
                       </div>
-                      <div style="display: inline-flex; gap: 0.35rem;">
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; width: 100%;">
                         <button type="button" id="btnGenStrongPassword" class="btn btn-secondary btn-sm"
-                          title="Generate high security password" style="white-space: nowrap; font-weight: 600;">
+                          title="Generate high security password" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.45rem 0.4rem; font-size: 0.78rem; font-weight: 600; white-space: nowrap;">
                           🔒 Strong Password
                         </button>
                         <button type="button" id="btnGenPin" class="btn btn-secondary btn-sm"
-                          title="Generate 6-digit numeric PIN" style="white-space: nowrap;">
+                          title="Generate 6-digit numeric PIN" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.45rem 0.4rem; font-size: 0.78rem; font-weight: 600; white-space: nowrap;">
                           🔢 6-Digit PIN
                         </button>
                       </div>
                     </div>
-                    <span class="form-text-muted">Parties only have read-only access to view their transactions.</span>
+                    <span class="form-text-muted" style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">Parties only have read-only access to view their transactions.</span>
                   </div>
             </div>
           </div>
@@ -207,7 +208,7 @@
               const isHidden = currentPasswordPlain.style.display === 'none';
               currentPasswordPlain.style.display = isHidden ? 'inline' : 'none';
               currentPasswordMasked.style.display = isHidden ? 'none' : 'inline';
-              revealBtnText.textContent = isHidden ? 'Hide Password' : 'Show Password';
+              revealBtnText.textContent = isHidden ? 'Hide' : 'Show';
             });
           }
 
