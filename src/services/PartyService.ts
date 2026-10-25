@@ -1,5 +1,7 @@
 import { Op, WhereOptions, InferAttributes } from 'sequelize';
 import { Party } from '../models/Party.model';
+import { Transaction } from '../models/Transaction.model';
+import { sequelize } from '../config/database';
 import { AppError } from '../utils/AppError';
 import { PartyFilter } from '../constants/transaction-types';
 
@@ -236,10 +238,33 @@ export class PartyService {
   }
 
   /**
-   * Delete party and its associated ledger transactions
+   * Soft-delete party and all its associated ledger transactions atomically
    */
   public static async deleteParty(partyId: string, userId: string): Promise<void> {
-    const party = await this.getPartyById(partyId, userId);
-    await party.destroy();
+    const t = await sequelize.transaction();
+    try {
+      const party = await Party.findOne({
+        where: { id: partyId, user_id: userId },
+        transaction: t
+      });
+
+      if (!party) {
+        throw AppError.notFound('Party not found or access denied');
+      }
+
+      // Soft delete all transactions of this party
+      await Transaction.destroy({
+        where: { party_id: partyId, user_id: userId },
+        transaction: t
+      });
+
+      // Soft delete the party
+      await party.destroy({ transaction: t });
+
+      await t.commit();
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
   }
 }

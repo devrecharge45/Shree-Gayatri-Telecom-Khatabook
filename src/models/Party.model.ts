@@ -25,6 +25,7 @@ export class Party extends Model<InferAttributes<Party>, InferCreationAttributes
   declare portal_access_enabled: CreationOptional<boolean>;
   declare created_at?: CreationOptional<Date>;
   declare updated_at?: CreationOptional<Date>;
+  declare deleted_at?: CreationOptional<Date | null>;
 
   // Optional loaded association
   declare user?: NonAttribute<User>;
@@ -115,11 +116,17 @@ Party.init(
     updated_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   },
   {
     sequelize,
     tableName: 'parties',
+    paranoid: true,
+    deletedAt: 'deleted_at',
     indexes: [
       {
         fields: ['user_id']
@@ -134,8 +141,12 @@ Party.init(
         where: {
           mobile_no: {
             [Op.ne]: null
-          }
+          },
+          deleted_at: null
         }
+      },
+      {
+        fields: ['deleted_at']
       }
     ]
   }
