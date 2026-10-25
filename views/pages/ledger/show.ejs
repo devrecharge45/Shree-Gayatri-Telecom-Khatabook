@@ -176,12 +176,13 @@
                       <% if (party.portal_access_enabled && party.mobile_no) { %>
                         <% const portalLoginUrl=(app && app.appUrl ? app.appUrl : '' ) + '/portal/login?install=1' ;
                           const actualPass=party.portal_password || '(Shopkeeper will provide PIN)' ; const
-                          passbookShareRaw=`Namaste ${party.name} ji,\n\n📲 *${company.name} - Digital Passbook
-                          App*\nAapka live credit-debit hisaab check karne ke liye mobile app install karein:\n\n1️⃣
-                          *Direct App Install & Login Link:*\n👉 ${portalLoginUrl}\n\n2️⃣ *Aapke Login Credentials:*\n📱
-                          Mobile: ${party.mobile_no}\n🔑 Password: ${actualPass}\n\n✨ *Tip:* Link open karte
-                          hi "Install App / Add to Home Screen" dabayein, app direct aapke phone mein install ho
-                          jayegi!`; const passbookShareMsg=encodeURIComponent(passbookShareRaw); %>
+                          passbookShareLines=[ `Namaste ${party.name} ji, 🙏`, ``, `📲 *${company.name} - Digital
+                          Passbook App*`, `Aapka live credit-debit hisaab check karne ke liye mobile app install
+                          karein:`, ``, `1️⃣ *Direct App Install & Login Link:*`, `👉 ${portalLoginUrl}`, ``, `2️⃣
+                          *Aapke Login Credentials:*`, `📱 *Mobile:* ${party.mobile_no}`, `🔑 *Password:*
+                          ${actualPass}`, ``, `💡 *Tip:* Link open karke *"Install App / Add to Home Screen"* dabayein,
+                          app direct aapke phone mein install ho jayegi!` ]; const
+                          passbookShareMsg=encodeURIComponent(passbookShareLines.join('\n')); %>
                           <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=<%= passbookShareMsg %>"
                             target="_blank" class="btn btn-secondary btn-sm"
                             style="color: #059669; border-color: rgba(16, 185, 129, 0.4); font-weight: 600;"
