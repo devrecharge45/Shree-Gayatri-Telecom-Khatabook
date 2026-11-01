@@ -23,7 +23,7 @@
   <% } %>
 
   <!-- Footer -->
-  <footer class="app-footer <%= (typeof currentUser !== 'undefined' && currentUser && typeof currentPath !== 'undefined' && !currentPath.includes('/ledger') && !currentPath.includes('/portal')) ? 'has-bottom-bar' : '' %>">
+  <footer class="app-footer <%= (typeof currentUser !== 'undefined' && currentUser && typeof currentPath !== 'undefined' && !currentPath.includes('/portal')) ? 'has-bottom-bar' : '' %>">
     <div class="footer-company"><%= company.name %></div>
     <div class="footer-contact">
       <% if (company.address) { %>

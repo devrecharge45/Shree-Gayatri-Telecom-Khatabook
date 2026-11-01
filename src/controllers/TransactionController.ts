@@ -13,8 +13,11 @@ export class TransactionController {
       const userId = req.user!.id;
       const partyId = req.params.partyId as string;
 
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+      const page = Math.max(1, req.query.page ? parseInt(req.query.page as string, 10) || 1 : 1);
+      const limit = Math.max(
+        1,
+        Math.min(100, req.query.limit ? parseInt(req.query.limit as string, 10) || 10 : 10)
+      );
       const search = (req.query.search as string) || '';
       const type = (req.query.type as string) || '';
       const startDate = (req.query.startDate as string) || '';

@@ -9,8 +9,11 @@ export class PartyController {
   public static async index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 15;
+      const page = Math.max(1, req.query.page ? parseInt(req.query.page as string, 10) || 1 : 1);
+      const limit = Math.max(
+        1,
+        Math.min(100, req.query.limit ? parseInt(req.query.limit as string, 10) || 10 : 10)
+      );
       const search = (req.query.search as string) || '';
       const filter = (req.query.filter as string) || 'all';
 

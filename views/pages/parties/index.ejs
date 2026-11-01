@@ -101,7 +101,7 @@
       <div class="parties-limit-wrapper">
         <label for="partiesLimitSelect" class="limit-label desktop-only">Show:</label>
         <select id="partiesLimitSelect" class="form-control limit-dropdown"
-          onchange="window.location.href='/parties?page=1&limit=' + this.value + '<%= search ? '&search=' + encodeURIComponent(search) : '' %>'">
+          onchange="window.location.href='/parties?page=1&limit=' + this.value + '<%= search ? '&search=' + encodeURIComponent(search) : '' %><%= (typeof filter !== 'undefined' && filter && filter !== 'all') ? '&filter=' + encodeURIComponent(filter) : '' %>'">
           <option value="10" <%=limit===10 ? 'selected' : '' %>>10 / page</option>
           <option value="20" <%=limit===20 ? 'selected' : '' %>>20 / page</option>
           <option value="30" <%=limit===30 ? 'selected' : '' %>>30 / page</option>
@@ -140,7 +140,7 @@
                       </span>
                       <span class="meta-dot">•</span>
                       <% } %>
-                        <span>Updated <%= formatters.date(party.updated_at) %></span>
+                        <span class="party-updated-date">Updated <%= formatters.entryDate(party.updated_at) %></span>
                   </span>
                 </div>
               </div>
@@ -157,100 +157,109 @@
                         <%= formatters.currency(Math.abs(bal)) %>
                       </span>
                       <span class="party-balance-status" style="color: var(--color-debit);">You will give</span>
-                      <% } else { %>
-                        <span class="party-balance-amount" style="color: var(--text-muted);">
-                          ₹0.00
-                        </span>
-                        <span class="party-balance-status" style="color: var(--text-muted);">Settled</span>
-                        <% } %>
+                    <% } else { %>
+                      <span class="party-balance-amount" style="color: var(--text-muted);">
+                        ₹0.00
+                      </span>
+                      <span class="party-balance-status" style="color: var(--text-muted);">Settled</span>
+                    <% } %>
                 </div>
 
                 <span class="party-chevron" aria-hidden="true">&rsaquo;</span>
               </div>
-            </a> <!-- Quick Action Shortcuts (Call & WhatsApp when phone exists, Edit always visible) -->
+            </a> <!-- Quick Action Shortcuts (Icon-Only: Call, WhatsApp, Edit) -->
             <div class="party-quick-bar">
               <% if (party.mobile_no) { %>
                 <a href="tel:<%= party.mobile_no %>" class="btn-quick-touch btn-touch-call"
-                  title="Call <%= party.name %>">
+                  title="Call <%= party.name %>" aria-label="Call <%= party.name %>">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path
                       d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
                     </path>
                   </svg>
-                  <span>Call</span>
                 </a>
                 <a href="https://wa.me/91<%= party.mobile_no.replace(/[^0-9]/g, '') %>?text=Hello%20<%= encodeURIComponent(party.name) %>,%20your%20current%20ledger%20balance%20with%20<%= encodeURIComponent(company.name) %>%20is%20<%= formatters.currency(Math.abs(party.current_balance)) %>."
-                  target="_blank" class="btn-quick-touch btn-touch-wa" title="WhatsApp <%= party.name %>">
+                  target="_blank" class="btn-quick-touch btn-touch-wa" title="WhatsApp <%= party.name %>" aria-label="WhatsApp <%= party.name %>">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.983.538 1.83.824 2.791.824 3.182 0 5.768-2.587 5.768-5.767.001-3.18-2.584-5.769-5.768-5.769zm3.385 8.167c-.145.408-.724.747-1.189.847-.32.069-.738.125-2.144-.457-1.798-.744-2.956-2.57-3.045-2.689-.089-.119-.729-.97-.729-1.85 0-.88.461-1.312.625-1.488.164-.176.357-.22.476-.22.12 0 .239.001.343.006.109.006.257-.041.401.306.149.357.509 1.242.553 1.332.045.089.074.194.015.313-.059.119-.089.194-.178.298-.089.104-.188.232-.268.312-.089.089-.182.186-.078.365.104.179.463.764.994 1.237.684.609 1.261.798 1.44.887.179.089.283.075.388-.045.104-.119.447-.521.566-.7.119-.179.239-.149.402-.089.164.06 1.041.491 1.22.58.179.089.298.134.343.209.045.074.045.432-.1 1.044z" />
                   </svg>
-                  <span>WhatsApp</span>
                 </a>
                 <% } %>
                   <a href="/parties/<%= party.id %>/edit" class="btn-quick-touch btn-touch-edit"
-                    title="Edit <%= party.name %>">
+                    title="Edit <%= party.name %>" aria-label="Edit <%= party.name %>">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                       stroke-linecap="round" stroke-linejoin="round">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                     </svg>
-                    <span>Edit</span>
                   </a>
             </div>
           </div>
           <% }); %>
 
             <!-- Server-Side Numbered Pagination -->
-            <% if (totalPages> 1) {
+            <% if (totalCount > 0) {
+              const filterQuery = (typeof filter !== 'undefined' && filter && filter !== 'all') ? '&filter=' + encodeURIComponent(filter) : '';
+              const searchQuery = search ? '&search=' + encodeURIComponent(search) : '';
+              const limitQuery = '&limit=' + limit;
+
               let pages = [];
-              if (totalPages <= 7) { for (let p=1; p <=totalPages; p++) pages.push(p); } else { pages.push(1); let
-                start=Math.max(2, currentPage - 1); let end=Math.min(totalPages - 1, currentPage + 1); if (currentPage
-                <=3) { start=2; end=4; } else if (currentPage>= totalPages - 2) {
-                start = totalPages - 3;
-                end = totalPages - 1;
+              if (totalPages <= 7) {
+                for (let p = 1; p <= totalPages; p++) pages.push(p);
+              } else {
+                pages.push(1);
+                let start = Math.max(2, currentPage - 1);
+                let end = Math.min(totalPages - 1, currentPage + 1);
+                if (currentPage <= 3) {
+                  start = 2;
+                  end = 4;
+                } else if (currentPage >= totalPages - 2) {
+                  start = totalPages - 3;
+                  end = totalPages - 1;
                 }
-
                 if (start > 2) pages.push('...');
-                for (let p = start; p <= end; p++) pages.push(p); if (end < totalPages - 1) pages.push('...');
-                  pages.push(totalPages); } %>
-                  <div class="pagination" style="padding: 1.25rem;">
-                    <div>Page <%= currentPage %> of <%= totalPages %> (Total <%= totalCount %> parties)</div>
-                    <div class="pagination-controls">
-                      <% if (currentPage> 1) { %>
-                        <a href="/parties?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>"
-                          class="page-btn" title="Previous Page">
-                          &larr;
-                        </a>
-                        <% } else { %>
-                          <span class="page-btn disabled">&larr;</span>
-                          <% } %>
-
-                            <% pages.forEach(function(p) { %>
-                              <% if (p==='...' ) { %>
-                                <span class="page-dots">...</span>
-                                <% } else { %>
-                                  <a href="/parties?page=<%= p %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>"
-                                    class="page-btn <%= p === currentPage ? 'active' : '' %>">
-                                    <%= p %>
-                                  </a>
-                                  <% } %>
-                                    <% }); %>
-
-                                      <% if (currentPage < totalPages) { %>
-                                        <a href="/parties?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>&limit=<%= limit %>"
-                                          class="page-btn" title="Next Page">
-                                          &rarr;
-                                        </a>
-                                        <% } else { %>
-                                          <span class="page-btn disabled">&rarr;</span>
-                                          <% } %>
-                    </div>
-                  </div>
+                for (let p = start; p <= end; p++) pages.push(p);
+                if (end < totalPages - 1) pages.push('...');
+                pages.push(totalPages);
+              }
+            %>
+              <div class="pagination parties-pagination" style="padding: 1.25rem;">
+                <div class="pagination-info">Page <%= currentPage %> of <%= totalPages %> (Total <%= totalCount %> parties)</div>
+                <div class="pagination-controls">
+                  <% if (currentPage > 1) { %>
+                    <a href="/parties?page=<%= currentPage - 1 %><%= searchQuery %><%= filterQuery %><%= limitQuery %>"
+                      class="page-btn" title="Previous Page">
+                      &larr;
+                    </a>
+                  <% } else { %>
+                    <span class="page-btn disabled">&larr;</span>
                   <% } %>
 
+                  <% pages.forEach(function(p) { %>
+                    <% if (p === '...') { %>
+                      <span class="page-dots">...</span>
                     <% } else { %>
+                      <a href="/parties?page=<%= p %><%= searchQuery %><%= filterQuery %><%= limitQuery %>"
+                        class="page-btn <%= p === currentPage ? 'active' : '' %>">
+                        <%= p %>
+                      </a>
+                    <% } %>
+                  <% }); %>
+
+                  <% if (currentPage < totalPages) { %>
+                    <a href="/parties?page=<%= currentPage + 1 %><%= searchQuery %><%= filterQuery %><%= limitQuery %>"
+                      class="page-btn" title="Next Page">
+                      &rarr;
+                    </a>
+                  <% } else { %>
+                    <span class="page-btn disabled">&rarr;</span>
+                  <% } %>
+                </div>
+              </div>
+            <% } %>
+<% } else { %>
                       <div class="empty-state">
                         <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none"
                           stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
