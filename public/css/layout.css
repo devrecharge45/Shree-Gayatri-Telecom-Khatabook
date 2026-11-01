@@ -7,7 +7,7 @@
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.5rem 1rem 5rem 1rem; /* bottom padding for mobile bottom bar */
+  padding: 1.25rem 1rem 1rem 1rem;
   flex: 1;
 }
 
@@ -240,7 +240,10 @@
     display: flex !important;
   }
   .app-container {
-    padding-bottom: 1.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
   }
   .nav-links.desktop-only {
     display: none !important;
@@ -252,7 +255,7 @@
     padding-bottom: 1.5rem;
   }
   .app-footer.has-bottom-bar {
-    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom)) !important;
   }
   .footer-contact {
     flex-direction: column;

@@ -123,8 +123,11 @@ export class PortalController {
   public static async passbook(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const party = req.party!;
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+      const page = Math.max(1, req.query.page ? parseInt(req.query.page as string, 10) || 1 : 1);
+      const limit = Math.max(
+        1,
+        Math.min(100, req.query.limit ? parseInt(req.query.limit as string, 10) || 10 : 10)
+      );
       const search = (req.query.search as string) || '';
       const type = (req.query.type as string) || '';
       const startDate = (req.query.startDate as string) || '';
@@ -182,8 +185,11 @@ export class PortalController {
         throw AppError.notFound('Party not found in your Khatabook.');
       }
 
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+      const page = Math.max(1, req.query.page ? parseInt(req.query.page as string, 10) || 1 : 1);
+      const limit = Math.max(
+        1,
+        Math.min(100, req.query.limit ? parseInt(req.query.limit as string, 10) || 10 : 10)
+      );
       const search = (req.query.search as string) || '';
       const type = (req.query.type as string) || '';
       const startDate = (req.query.startDate as string) || '';

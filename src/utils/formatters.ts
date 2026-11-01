@@ -59,6 +59,38 @@ export class Formatters {
   }
 
   /**
+   * Formats Date for Khatabook Ledger Entry (e.g. "03 Oct 26 • 10:15 AM" or "03 Oct 26")
+   */
+  public static entryDate(
+    date: Date | string | null | undefined,
+    createdAt?: Date | string | null
+  ): string {
+    if (!date) return '-';
+    const d = new Date(date);
+    const dateFormatted = d.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: '2-digit'
+    });
+    if (createdAt) {
+      try {
+        const cd = new Date(createdAt);
+        if (!isNaN(cd.getTime())) {
+          const timeStr = cd.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          });
+          return `${dateFormatted} • ${timeStr}`;
+        }
+      } catch {
+        return dateFormatted;
+      }
+    }
+    return dateFormatted;
+  }
+
+  /**
    * Extract initials from name (e.g., "Ramesh Kumar" -> "RK")
    */
   public static initials(name: string): string {

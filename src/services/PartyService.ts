@@ -26,7 +26,7 @@ export class PartyService {
    */
   public static async getParties(params: PartyQueryParams) {
     const page = Math.max(1, params.page || 1);
-    const limit = Math.min(100, Math.max(1, params.limit || 15));
+    const limit = Math.min(100, Math.max(1, params.limit || 10));
     const offset = (page - 1) * limit;
 
     const conditions: WhereOptions<InferAttributes<Party>>[] = [{ user_id: params.userId }];
